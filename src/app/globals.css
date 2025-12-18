@@ -48,8 +48,13 @@
 
 html,
 body {
+  font-family: 'UfficioMono-400';
   max-width: 100vw;
   overflow-x: hidden;
+  font-family: 'UfficioMono-400' !important;
+
+ 
+  
 }
 
 body {
