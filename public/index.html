@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>TightKnit Landing</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+  @font-face {
+  font-family: 'UfficioMono-400';
+  src: url('/font/UfficioMono-400.woff2') format('woff2'),
+       url('/font/UfficioMono-400.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+    @font-face {
+      font-family: "ALTGumbo";
+      src: url("Fonts/ALT Gumbo/ALTGumbo-Semibold.woff") format("woff");
+      font-weight: 500;
+      font-style: normal;
+      font-display: swap;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: rgb(0, 0, 0);
+      color: black;
+      overflow: hidden;
+      transition: background-color 1s;
+    }
+
+    .cls-1{
+      fill: white;
+      transition: fill 1s;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "SF Pro Text",
+        "Helvetica Neue", Arial, sans-serif;
+    }
+
+   a{
+      font-family: 'UfficioMono-400';
+      color: black;
+      text-decoration: none;
+   }
+
+    .page {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* CENTER BIG SVG LOGO */
+    .intro-logo {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .intro-logo svg {
+      max-width: min(40vw, 480px);
+      width: 100%;
+      height: auto;
+      display: block;
+    }
+
+    .intro-logo.hidden {
+      display: none;
+    }
+
+    /* TOP BAR */
+    .top-bar {
+      position: fixed;
+      opacity: 0;
+      transform: translateY(-10px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+      z-index: 99999;
+      pointer-events: none;
+    }
+
+    .top-bar.visible {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .logo-block {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .logo-block img {
+      height: 25px;
+      width: 150px;
+      width: auto;
+      display: block;
+    }
+    .menuVoices{
+    position: fixed;
+    top: 20px;
+    display: flex;
+    gap: 10vw;
+    padding-right: 10vw;
+    font-size: 11px;
+    margin-left: 50vW;
+    }
+
+    .nav {
+      top: 0px;
+      display: flex;
+      gap: 100px;
+    }
+
+    .menuVoices a {
+      text-decoration: none;
+      color: black;
+      position: relative;
+      padding-bottom: 2px;
+    }
+
+    .menuVoices a::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: 0;
+      width: 0;
+      height: 1px;
+      background: black;
+      transition: width 0.25s ease;
+    }
+
+    .menuVoices a:hover::after {
+      width: 100%;
+    }
+
+   
+
+    /* CENTER CONTENT */
+    .center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .center-inner {
+      max-width: 900px;
+      width: 100%;
+    }
+
+    /* LIST (GSAP EFFECT) */
+    .services-wrapper {
+      display: flex;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.6s ease;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translateY(-50%) translateX(-50%);
+    }
+
+    .services-wrapper.visible {
+      opacity: 1;
+    }
+
+    .services-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0px;
+      margin: 0;
+      padding: 0;
+      align-items: center;
+      text-align: center;
+    }
+
+    .services-list li {
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+    }
+
+    .services-list .li-inner {
+      display: inline-block;
+      font-family: 'UfficioMono-400';
+      font-size: clamp(3rem, 6vw, 5rem);
+      letter-spacing: 0em;
+      text-transform: uppercase;
+      line-height: 1;
+      white-space: nowrap;
+      color: transparent;
+      -webkit-text-stroke: 1px black;
+      text-stroke: 1px black;
+      cursor: pointer;
+      transition: color 0.25s ease, -webkit-text-stroke 0.25s ease, text-stroke 0.25s ease;
+    }
+
+    .services-list .li-inner:hover {
+      color: black;
+      -webkit-text-stroke: 0;
+      text-stroke: 0;
+    }
+
+    /* FINAL COPY */
+    .final-copy {
+      font-size: clamp(1rem, 1.6vw, 1.2rem);
+      line-height: 1.2;
+      max-width: 90vw;
+      margin: 0 auto;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: opacity 0.8s ease, transform 0.8s ease;
+      font-family: "ALTGumbo", system-ui, sans-serif;
+      font-size: 1.5rem;
+    }
+    .final-copy.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      .top-bar {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+      }
+
+      .nav {
+        gap: 100px;
+      }
+
+      .services-list .li-inner {
+        white-space: normal;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- BIG INTRO SVG LOGO (animates by hiding paths/groups randomly) -->
+    <div id="introLogo" class="intro-logo">
+      <svg id="Layer_2" data-name="Layer 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 413.41 66.81">
+        <defs>
+          <style>
+            .cls-1 {
+              stroke-width: 0px;
+            }
+          </style>
+        </defs>
+        <g id="Layer_1-2" data-name="Layer 1">
+          <g>
+            <path class="cls-1" d="M323.46,41.91c1.28-10.32,2.54-20.63,3.86-30.94.17-1.31.46-2.63.94-3.85.68-1.72,2.15-2.29,3.92-1.99,1.64.28,2.62,1.34,2.78,2.97.11,1.18.05,2.4-.09,3.58-1.62,14.04-3.26,28.08-4.92,42.12-.12,1.06-.34,2.11-.59,3.14-.42,1.72-1.5,2.79-3.28,3.06-1.77.27-3.18-.38-4.11-1.87-.84-1.35-1.63-2.76-2.25-4.23-3.01-7.12-5.96-14.26-8.93-21.39-.35-.84-.68-1.7-1.27-3.16-.39,1.28-.7,1.94-.77,2.62-.83,8.36-1.63,16.71-2.43,25.07-.05.53,0,1.07-.08,1.6-.35,2.51-1.7,3.85-3.8,3.82-2.07-.04-3.71-1.48-3.7-3.91.01-4.13.18-8.28.64-12.37,1.09-9.54,2.4-19.05,3.62-28.57.05-.4.17-.78.22-1.18.26-2.08,1.34-3.54,3.43-3.9,2.11-.36,3.65.8,4.54,2.58,2.09,4.17,4.16,8.35,5.99,12.63,1.98,4.64,3.68,9.41,5.5,14.13.26.02.52.05.78.07Z"/>
+            <path class="cls-1" d="M162.62,38.79c-5.29.36-10.42.71-15.93,1.09-.12,1.43-.31,2.71-.33,3.99-.06,4.67-.03,9.35-.09,14.02-.02,1.33-.13,2.66-.33,3.98-.31,2.02-1.58,3.05-3.6,3-1.84-.05-2.99-1.05-3.28-2.89-.17-1.05-.32-2.12-.31-3.18.18-14.28.37-28.56.62-42.85.03-1.45.28-2.94.69-4.33.46-1.57,1.77-2.36,3.38-2.28,1.6.08,2.81.95,3.16,2.58.25,1.16.33,2.38.34,3.57.03,5.33.01,10.67.01,16.05,2.1.59,11.54.13,15.75-.88,0-5.1-.02-10.27.01-15.43,0-1.32.04-2.67.3-3.96.36-1.78,1.58-2.8,3.42-2.76,1.8.04,3,1.07,3.42,2.82.25,1.03.37,2.11.39,3.17.32,15.48.61,30.96.88,46.45.02,1.05-.13,2.13-.35,3.16-.38,1.83-1.67,2.78-3.45,2.69-1.73-.09-3.05-1.03-3.37-2.87-.22-1.31-.35-2.65-.4-3.98-.22-6-.39-12.01-.61-18.01-.03-.91-.19-1.81-.35-3.16Z"/>
+            <path class="cls-1" d="M264.55,23.71c3.97-3.14,7.59-6,11.23-8.85,1.05-.82,2.08-1.69,3.23-2.35,1.91-1.11,3.92-.77,5.04.69,1.14,1.49,1.04,3.49-.53,5.1-1.2,1.23-2.64,2.23-3.99,3.32-3.62,2.92-7.24,5.84-11.09,8.95,4.38,5.43,8.56,10.61,12.74,15.78,2.43,3.01,4.89,6,7.3,9.02.66.83,1.29,1.7,1.79,2.64.86,1.62.55,3.16-.79,4.35-1.36,1.21-3.02,1.23-4.43.21-1.17-.84-2.14-1.99-3.06-3.12-4.64-5.68-9.24-11.4-13.86-17.1-.83-1.03-1.71-2.03-2.95-3.5-.24,1.28-.5,2.07-.52,2.86-.15,5.47-.21,10.93-.4,16.4-.07,1.85-.29,3.73-.73,5.53-.43,1.76-1.87,2.63-3.64,2.45-1.56-.16-2.73-1.08-3-2.77-.15-.92-.26-1.85-.26-2.77.02-12.27-.02-24.53.13-36.8.08-6.26.47-12.52.79-18.78.05-1.04.27-2.14.72-3.06.71-1.45,2.14-2.27,3.65-1.74,1.11.39,2.42,1.38,2.79,2.41.51,1.42.32,3.14.26,4.72-.16,4.53-.4,9.05-.59,13.58-.03.76.08,1.53.16,2.83Z"/>
+            <path class="cls-1" d="M115.44,52.54c-1.76,1.2-2.72,1.9-3.72,2.52-6.64,4.15-14.67,2.36-18.81-4.28-.98-1.57-1.89-3.29-2.34-5.06-3.1-12.04-1.53-23.31,6.15-33.36,3.1-4.06,7.17-6.8,12.35-7.44,1.4-.17,2.93-.01,4.3.37,1.59.44,2.2,1.85,2.15,3.46-.04,1.65-.82,2.78-2.48,3.2-.39.1-.77.26-1.17.28-5.99.27-9.36,4.1-11.82,8.94-3.46,6.8-4.32,13.97-2.42,21.39.36,1.4.93,2.8,1.67,4.03,1.88,3.12,5.14,3.95,8.23,2.02,2.88-1.8,5.23-4.14,6.15-7.59.17-.64.37-1.28.58-1.91.94-2.78,2.35-3.9,4.5-3.6,1.97.27,3.16,1.57,3.34,4.33.41,6.26.65,12.53.91,18.79.03.78-.17,1.59-.36,2.36-.44,1.82-1.77,2.72-3.5,2.69-1.75-.03-3.04-1-3.42-2.81-.19-.9-.26-1.84-.29-2.76-.04-1.59-.01-3.18-.01-5.57Z"/>
+            <path class="cls-1" d="M66.39,14.84v41.59c2.55,0,4.66-.01,6.76,0,.93,0,2.09-.26,2.73.19,1.09.78,2.26,1.88,2.66,3.09.55,1.69-.47,3.2-2.17,3.75-1.5.48-3.12.69-4.7.77-5.46.3-10.92.5-16.38.7-.92.03-1.88,0-2.78-.17-1.92-.38-3.07-1.57-3.13-3.59-.06-2.07,1.17-3.26,3.03-3.65,1.92-.41,3.9-.53,6.23-.83.03-14.05-.32-27.83-.53-42-2.09,0-3.54.04-4.98-.01-1.19-.04-2.39-.13-3.57-.32-2.03-.32-3.06-1.68-2.97-3.63.08-1.74,1.07-2.99,2.94-3.27.79-.12,1.58-.27,2.38-.28,7.07-.14,14.13-.29,21.2-.34,3.78-.03,5.54,1.22,5.59,3.67.05,2.48-1.72,3.83-5.37,4.03-1.2.07-2.4,0-3.6.05-1.05.04-2.1.14-3.34.23Z"/>
+            <path class="cls-1" d="M15.84,21.71c-3.04,1.33-5.43,2.44-7.88,3.42-1.34.54-2.76,1.02-4.19,1.2-1.59.2-2.79-.59-3.46-2.15-.68-1.59-.23-2.94.94-3.97.88-.77,1.98-1.34,3.06-1.82,9.24-4.13,18.5-8.22,27.76-12.3.96-.42,1.99-.8,3.03-.95,1.75-.25,3.19.41,3.9,2.1.71,1.68.22,3.18-1.16,4.29-.82.66-1.8,1.14-2.76,1.58-2.42,1.11-4.81,2.35-7.32,3.18-2.94.97-4.06,2.65-4.2,5.81-.51,11.71-1.34,23.41-2.06,35.12-.12,1.86-.22,3.73-.49,5.58-.37,2.61-1.69,3.95-3.68,3.96-2.12,0-3.63-1.58-3.67-4.38-.04-3.06.22-6.12.41-9.18.57-9.31,1.17-18.62,1.74-27.93.06-.91,0-1.83,0-3.57Z"/>
+            <path class="cls-1" d="M359.44,50.24c1.96,0,3.4-.07,4.83.02,1.18.07,2.56,0,3.47.58.99.64,2.19,1.99,2.14,2.97-.06,1.21-1.1,2.64-2.14,3.43-.84.64-2.28.58-3.47.64-5.45.28-10.91.5-16.37.72-.66.03-1.34,0-1.99-.12-2.22-.41-3.5-1.77-3.54-3.68-.04-1.94,1.16-3.37,3.42-3.76,1.81-.32,3.66-.4,5.6-.6V18.06c-2,.15-3.69.34-5.38.39-2.77.08-4.52-1.13-4.81-3.2-.28-2.02,1.15-3.91,3.85-4.27,6.33-.84,12.69-1.42,19.04-2.07.65-.07,1.33.09,1.98.22,1.67.33,2.52,1.45,2.61,3.08.1,1.8-.68,3.16-2.48,3.63-2.17.56-4.38.95-6.77,1.45v32.94Z"/>
+            <path class="cls-1" d="M392.77,15.04c-3.82,0-6.98,0-10.14,0-1.19,0-2.41.17-3.57,0-1.79-.26-2.83-1.46-2.98-3.26-.15-1.8.67-3.12,2.39-3.71.87-.3,1.81-.48,2.73-.54,8.64-.61,17.29-1.19,25.94-1.74,1.06-.07,2.14,0,3.19.14,1.8.26,2.89,1.36,3.06,3.17.17,1.83-.69,3.24-2.46,3.62-2.46.53-4.99.73-7.49,1.06-.79.1-1.58.19-2.86.33-.08,1.54-.22,3.09-.23,4.63-.06,11.47-.09,22.94-.17,34.41-.01,1.59-.09,3.22-.41,4.76-.37,1.76-1.7,2.7-3.51,2.67-1.64-.03-2.85-.92-3.19-2.52-.33-1.54-.49-3.15-.49-4.74.03-11.07.12-22.14.19-33.21,0-1.58,0-3.16,0-5.08Z"/>
+            <path class="cls-1" d="M205.46,13.33c-.32,7.39-.63,14.17-.89,20.96-.3,7.6-.54,15.2-.86,22.8-.05,1.19-.19,2.41-.53,3.55-.5,1.71-1.73,2.67-3.57,2.61-1.84-.05-3.02-1.1-3.45-2.8-.25-1.01-.2-2.11-.16-3.17.55-13.73,1.13-27.46,1.68-41.19.03-.77-.07-1.54-.13-2.75-2.83,0-5.47.06-8.09-.03-1.31-.05-2.67-.2-3.9-.62-1.54-.51-2.56-1.9-2.1-3.42.37-1.22,1.48-2.41,2.58-3.15.77-.52,2.06-.35,3.12-.35,7.61-.02,15.21-.02,22.82,0,.8,0,1.6.02,2.4.11,1.96.22,3.2,1.28,3.47,3.27.26,1.89-.95,3.45-3.2,3.91-1.42.29-2.91.22-4.38.26-1.45.04-2.91,0-4.81,0Z"/>
+          </g>
+        </g>
+      </svg>
+    </div>
+
+    <!-- TOP BAR WITH SMALL SVG LOGO + NAV -->
+      <header id="topBar" class="top-bar">
+      
+      <div class="logo-block" style='display:flex; padding:20px;padding-bottom:5px; position:fixed; top:0;left:0;width:100vW;z-index:99' >
+      
+        <Link href="/">
+          <img
+          src="/Logo.svg"
+          alt="Next.js logo"
+          style="width: 150px;height: 25px"
+         
+          priority
+        />
+        </Link>
+
+
+        <nav class="menuVoices">
+          <a href="/directors" className="hover:underline">
+            DIRECTORS
+          </a>
+          <a href="/about" className="hover:underline">
+            ABOUT
+          </a>
+          <a href="/AI" className="hover:underline">
+            AI
+          </a>
+          <a href="/contact" className="hover:underline">
+            CONTACT
+          </a>
+        </nav>
+      </div>
+    </header>
+    <!-- CENTER AREA -->
+    <main class="center">
+      <div class="center-inner">
+        <!-- LIST -->
+        <div id="servicesWrapper" class="services-wrapper">
+          <ul id="servicesList" class="services-list">
+            <li><span class="li-inner">VISUAL RESEARCH</span></li>
+            <li><span class="li-inner">WRITING</span></li>
+            <li><span class="li-inner">TREATMENT DESIGN</span></li>
+            <li><span class="li-inner">AI CONCEPTS</span></li>
+            <li><span class="li-inner">MOOD FILMS</span></li>
+          </ul>
+        </div>
+
+        <!-- FINAL COPY -->
+        <p id="finalCopy" class="final-copy">
+          A vastly experienced team of creative visual researchers, designers, writers and editors boasting a diverse
+          range of creative knowledge and skill. Ever-evolving and adaptable our TightKnit Team will be ready to pick up
+          your project at any stage of development and polish it to perfection. Utilising cutting-edge industry tools to
+          make sure your pitch delivers your vision and cuts through the noise to win you the job.
+        </p>
+      </div>
+    </main>
+  </div>
+
+  <!-- GSAP (for the list effect) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+
+  <script>
+
+
+    setTimeout(() => {
+        document.body.style.backgroundColor = 'white'; // cambia colore qui
+         document.querySelectorAll('.cls-1').forEach(el => {
+      el.style.fill = 'black';
+    });
+  }, 1000);
+    // Random disappearance of text characters (used for services)
+    function letterDisappear(element, interval = 120) {
+      const originalText = element.textContent;
+      const trimmed = originalText;
+      element.textContent = "";
+
+      const spans = [];
+      for (let i = 0; i < trimmed.length; i++) {
+        const span = document.createElement("span");
+        span.textContent = trimmed[i];
+        span.className = "char";
+        element.appendChild(span);
+        spans.push(span);
+      }
+
+      const indices = spans.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      indices.forEach((idx, i) => {
+        setTimeout(() => {
+          spans[idx].style.visibility = "hidden";
+        }, i * interval);
+      });
+
+      return new Promise((resolve) => {
+        setTimeout(resolve, indices.length * interval + 80);
+      });
+    }
+
+    // Random disappearance for SVG elements (logo)
+    function svgDisappear(svgEl, interval = 180) {
+      if (!svgEl) return Promise.resolve();
+
+      const parts = Array.from(
+        svgEl.querySelectorAll("g, path, rect, circle, ellipse, polygon, polyline")
+      );
+
+      if (!parts.length) return Promise.resolve();
+
+      const indices = parts.map((_, i) => i);
+      for (let i = indices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [indices[i], indices[j]] = [indices[j], indices[i]];
+      }
+
+      indices.forEach((idx, i) => {
+        setTimeout(() => {
+          parts[idx].style.visibility = "hidden";
+        }, i * interval);
+      });
+
+      return new Promise((resolve) => {
+        setTimeout(resolve, indices.length * interval + 80);
+      });
+    }
+
+    window.addEventListener("load", () => {
+      const introLogo = document.getElementById("introLogo");
+      const svgElement = introLogo.querySelector("svg");
+      const topBar = document.getElementById("topBar");
+      const servicesWrapper = document.getElementById("servicesWrapper");
+      const finalCopy = document.getElementById("finalCopy");
+
+      const LOGO_HOLD = 2500; // ms before logo starts disappearing
+
+      // 1) Hold logo, then hide SVG parts randomly (slower)
+      setTimeout(() => {
+        svgDisappear(svgElement, 180).then(() => {
+          introLogo.classList.add("hidden");
+          step2();
+        });
+      }, LOGO_HOLD);
+
+      function step2() {
+        // 2) Show nav + list, animate list IN immediately with GSAP
+        topBar.classList.add("visible");
+        servicesWrapper.classList.add("visible");
+
+        const tl = gsap.timeline({
+          onComplete: () => {
+            // when appear animation is done, set up triggers for DISAPPEARING
+            setupDisappearTrigger();
+          }
+        });
+
+        tl.from("#servicesList li .li-inner", {
+          y: "100%",
+          duration: 1.4,
+          ease: "power2.out",
+          stagger: 0.6
+        });
+
+        function setupDisappearTrigger() {
+          let disappearStarted = false;
+          let hoverTimeoutId = null;
+          let fallbackTimeoutId = null;
+
+          function startDisappear() {
+            if (disappearStarted) return;
+            disappearStarted = true;
+            if (hoverTimeoutId) clearTimeout(hoverTimeoutId);
+            if (fallbackTimeoutId) clearTimeout(fallbackTimeoutId);
+            step3();
+          }
+
+          // Fallback: if no hover, start disappearance after 4s
+          fallbackTimeoutId = setTimeout(startDisappear, 0);
+
+          // On hover: start disappearance 2s after first hover
+          servicesWrapper.addEventListener("mouseenter", () => {
+            if (disappearStarted) return;
+            if (hoverTimeoutId) clearTimeout(hoverTimeoutId);
+            hoverTimeoutId = setTimeout(startDisappear, 2000);
+          });
+        }
+      }
+
+      function step3() {
+  const items = gsap.utils.toArray("#servicesList li .li-inner");
+
+  gsap.to(items, {
+    y: "-100%",
+    duration: .5,
+    ease: "power2.in",
+    stagger: 0.3,
+    onComplete: () => {
+      servicesWrapper.style.display = "none";
+      step4();
+    }
+  });
+}
+
+      function step4() {
+        // 4) Show final paragraph in the middle; nav stays
+        finalCopy.classList.add("visible");
+      }
+    });
+  </script>
+</body>
+</html>
