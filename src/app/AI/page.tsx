@@ -8,6 +8,9 @@ import {
 } from '@/lib/queries/AI';
 import Gsap404Page from './Gsap404Page';
 
+export const dynamic='force-static';
+export const revalidate= 0;
+
 async function getAIImages(): Promise<AIImage[]> {
   const data = await hygraph.request<AIPageQueryResult>(AI_PAGE_QUERY);
   const first = data.ais[0];

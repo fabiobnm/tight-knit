@@ -7,6 +7,10 @@ import {
 } from "@/lib/queries/directors";
 import DirectorsList from "@/components/DirectorsList/DirectorsList";
 
+export const dynamic='force-static';
+export const revalidate= 0;
+
+
 async function getDirectors() {
   const data = await hygraph.request<DirectorsPageQueryResult>(
     DIRECTORS_PAGE_QUERY
