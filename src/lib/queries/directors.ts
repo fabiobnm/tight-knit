@@ -13,6 +13,7 @@ export type Project = {
 
 export type Director = {
   name: string;
+  avatar?: ProjectImage | null;
   info?: {
     markdown: string | null;
   } | null;
@@ -27,6 +28,7 @@ export const DIRECTORS_PAGE_QUERY = /* GraphQL */ `
   query directors {
     directors {
       name
+      avatar{url}
       info {
         markdown
       }

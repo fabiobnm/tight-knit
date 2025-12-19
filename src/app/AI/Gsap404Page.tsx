@@ -29,7 +29,7 @@ export default function Gsap404Page({ images }: Props) {
       const cards = safeImages.map((_, index) => {
         const i = index + 1;
         // pattern a caso per endTranslateX/rotate, puoi customizzarlo
-        const endTranslateX =  gsap.utils.random(0, 500);
+        const endTranslateX =  gsap.utils.random(0, 5000);
         const rotate = 0;
 
         return {
