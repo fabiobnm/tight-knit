@@ -7,7 +7,7 @@ type LightboxGalleryProps = {
   images: string[];
   initialIndex?: number;
   onClose: () => void;
-   title: string;
+  title: string;
   client: string;
 };
 
@@ -19,21 +19,29 @@ export default function LightboxGallery({
   client,
 }: LightboxGalleryProps) {
   const [current, setCurrent] = useState(initialIndex);
+  const [videoError, setVideoError] = useState(false);
 
   const hasImages = images && images.length > 0;
-  const safeIndex = hasImages ? ((current % images.length) + images.length) % images.length : 0;
+  const safeIndex = hasImages
+    ? ((current % images.length) + images.length) % images.length
+    : 0;
+
+  const src = images[safeIndex];
+
+  useEffect(() => {
+    setVideoError(false);
+  }, [safeIndex]);
 
   const handleNext = () => {
     if (!hasImages) return;
-    setCurrent((prev) => (prev + 1) % images.length);
+    setCurrent((p) => (p + 1) % images.length);
   };
 
   const handlePrev = () => {
     if (!hasImages) return;
-    setCurrent((prev) => (prev - 1 + images.length) % images.length);
+    setCurrent((p) => (p - 1 + images.length) % images.length);
   };
 
-  // ESC per chiudere
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -59,8 +67,7 @@ export default function LightboxGallery({
         zIndex: 1000,
       }}
     >
-
-              {/* HEADER INFO (title + client) in alto a sinistra */}
+      {/* HEADER */}
       <div
         style={{
           position: "fixed",
@@ -68,22 +75,15 @@ export default function LightboxGallery({
           left: 16,
           color: "white",
           zIndex: 1001,
-          maxWidth: "40vw",
+          fontSize: 14,
         }}
       >
-        <div
-          style={{
-            fontSize: 14,
-          }}
-        >
-          {title} <br />
-          {client}
-        </div>
-       
+        {title}
+        <br />
+        {client}
       </div>
 
-
-      {/* blocco contenuto, clic qui non chiude */}
+      {/* CONTENT */}
       <div
         onClick={(e) => e.stopPropagation()}
         style={{
@@ -95,18 +95,34 @@ export default function LightboxGallery({
           justifyContent: "center",
         }}
       >
-        {/* immagine */}
-        <img
-          src={images[safeIndex]}
-          alt={`Image ${safeIndex + 1}`}
-          style={{
-            maxWidth: "100%",
-            maxHeight: "100%",
-            objectFit: "contain",
-          }}
-        />
+        {/* TRY VIDEO FIRST */}
+        {!videoError ? (
+          <video
+            src={src}
+            controls
+            autoPlay
+            muted
+            playsInline
+            preload="metadata"
+            style={{
+              maxWidth: "100%",
+              maxHeight: "80vH",
+            }}
+            onError={() => setVideoError(true)}
+          />
+        ) : (
+          <img
+            src={src}
+            alt=""
+            style={{
+              maxWidth: "100%",
+              maxHeight: "80vH",
+              objectFit: "contain",
+            }}
+          />
+        )}
 
-        {/* close */}
+        {/* CLOSE */}
         <button
           onClick={onClose}
           style={{
@@ -116,7 +132,6 @@ export default function LightboxGallery({
             background: "transparent",
             color: "white",
             border: "none",
-            padding: "8px 12px",
             cursor: "pointer",
             fontSize: 12,
           }}
@@ -124,65 +139,52 @@ export default function LightboxGallery({
           X
         </button>
 
-        {/* prev */}
+        {/* PREV */}
         {images.length > 1 && (
           <button
             onClick={handlePrev}
             style={{
               position: "absolute",
-              left: 8,
-              width:'50%',
-              height:'80vH',
+              left: 0,
+              width: "50%",
+              height: "80vh",
               background: "transparent",
-              color: "white",
               border: "none",
-              padding: "8px 10px",
               cursor: "w-resize",
-              fontSize: 12,
             }}
-          >
-            
-          </button>
+          />
         )}
 
-        {/* next */}
+        {/* NEXT */}
         {images.length > 1 && (
           <button
             onClick={handleNext}
             style={{
               position: "absolute",
-              right: 8,
-              width:'50%',
-              height:'80vh',
-              
+              right: 0,
+              width: "50%",
+              height: "80vh",
               background: "transparent",
-              color: "white",
               border: "none",
-              padding: "8px 10px",
               cursor: "e-resize",
-              fontSize: 12,
             }}
-          >
-            
-          </button>
+          />
         )}
 
-        {/* indicator */}
-        {images.length > 0 && (
-          <div
-            style={{
-              position: "fixed",
-              bottom: '50px',
-              left: "50%",
-              transform: "translateX(-50%)",
-              color: "white",
-              fontSize: 11,
-              opacity: 0.8,
-            }}
-          >
-            {safeIndex + 1} / {images.length}
-          </div>
-        )}
+        {/* INDICATOR */}
+        <div
+          style={{
+            position: "fixed",
+            bottom: 50,
+            left: "50%",
+            transform: "translateX(-50%)",
+            color: "white",
+            fontSize: 11,
+            opacity: 0.8,
+          }}
+        >
+          {safeIndex + 1} / {images.length}
+        </div>
       </div>
     </div>
   );
