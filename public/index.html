@@ -138,21 +138,7 @@
       padding-bottom: 2px;
     }
 
-    .menuVoices a::after {
-      content: "";
-      position: absolute;
-      left: 0;
-      bottom: 0;
-      width: 0;
-      height: 1px;
-      background: black;
-      transition: width 0.25s ease;
-    }
-
-    .menuVoices a:hover::after {
-      width: 100%;
-    }
-
+    
    
 
     /* CENTER CONTENT */
@@ -259,6 +245,25 @@
         text-align: center;
       }
     }
+
+
+
+
+    .menuVoices a {
+  text-decoration: none;
+  opacity: 1;
+  transition: opacity 0.3s;
+}
+
+/* Quando una voce viene hoverata */
+.menuVoices:hover a {
+  opacity: 0.2; /* tutte diventano semi-trasparenti */
+}
+
+/* La voce effettivamente hoverata torna opacity:1 */
+.menuVoices a:hover {
+  opacity: 1;
+}
   </style>
 </head>
 <body>
