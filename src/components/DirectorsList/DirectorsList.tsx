@@ -123,7 +123,7 @@ export default function DirectorsList({ directors }: Props) {
                     <div
                       style={{
                         height: "100%",
-                        minWidth: "300px",
+                        minWidth: "25vW",
                         position: "relative",
                         padding: '0 20px',
                         boxSizing: "border-box",

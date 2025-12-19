@@ -14,13 +14,13 @@
   font-style: normal;
 }
 
-    @font-face {
-      font-family: "ALTGumbo";
-      src: url("Fonts/ALT Gumbo/ALTGumbo-Semibold.woff") format("woff");
-      font-weight: 500;
-      font-style: normal;
-      font-display: swap;
-    }
+@font-face {
+  font-family: 'ALTGumbo-semi';
+  src: url('/font/ALTGumbo-Semibold.woff2') format('woff2'),
+       url('/font/ALTGumbo-Semibold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
 
     * {
       box-sizing: border-box;
@@ -28,10 +28,16 @@
       padding: 0;
     }
 
+    #introLogo{
+      opacity: 1;
+      
+      transition:  .9s;
+    }
+
     html,
     body {
       height: 100%;
-      background: rgb(0, 0, 0);
+      background: #1b0f1b;
       color: black;
       overflow: hidden;
       transition: background-color 1s;
@@ -72,7 +78,7 @@
 
     .intro-logo svg {
       max-width: min(40vw, 480px);
-      width: 100%;
+      width: 260px;
       height: auto;
       display: block;
     }
@@ -202,11 +208,11 @@
 
     .services-list .li-inner {
       display: inline-block;
-      font-family: 'UfficioMono-400';
+      font-family: 'ALTGumbo-semi';
       font-size: clamp(3rem, 6vw, 5rem);
       letter-spacing: 0em;
       text-transform: uppercase;
-      line-height: 1;
+      line-height: .8;
       white-space: nowrap;
       color: transparent;
       -webkit-text-stroke: 1px black;
@@ -224,13 +230,13 @@
     /* FINAL COPY */
     .final-copy {
       font-size: clamp(1rem, 1.6vw, 1.2rem);
-      line-height: 1.2;
+      line-height: 1;
       max-width: 90vw;
       margin: 0 auto;
       opacity: 0;
       transform: translateY(20px);
       transition: opacity 0.8s ease, transform 0.8s ease;
-      font-family: "ALTGumbo", system-ui, sans-serif;
+      font-family: 'ALTGumbo-semi';
       font-size: 1.5rem;
     }
     .final-copy.visible {
@@ -349,7 +355,6 @@
     setTimeout(() => {
         document.body.style.backgroundColor = 'white'; // cambia colore qui
          document.querySelectorAll('.cls-1').forEach(el => {
-      el.style.fill = 'black';
     });
   }, 1000);
     // Random disappearance of text characters (used for services)
@@ -384,33 +389,6 @@
       });
     }
 
-    // Random disappearance for SVG elements (logo)
-    function svgDisappear(svgEl, interval = 180) {
-      if (!svgEl) return Promise.resolve();
-
-      const parts = Array.from(
-        svgEl.querySelectorAll("g, path, rect, circle, ellipse, polygon, polyline")
-      );
-
-      if (!parts.length) return Promise.resolve();
-
-      const indices = parts.map((_, i) => i);
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
-
-      indices.forEach((idx, i) => {
-        setTimeout(() => {
-          parts[idx].style.visibility = "hidden";
-        }, i * interval);
-      });
-
-      return new Promise((resolve) => {
-        setTimeout(resolve, indices.length * interval + 80);
-      });
-    }
-
     window.addEventListener("load", () => {
       const introLogo = document.getElementById("introLogo");
       const svgElement = introLogo.querySelector("svg");
@@ -422,11 +400,18 @@
 
       // 1) Hold logo, then hide SVG parts randomly (slower)
       setTimeout(() => {
-        svgDisappear(svgElement, 180).then(() => {
+
+            introLogo.style.opacity='0'
+            introLogo.style.transform='scale(.4)'
+           setTimeout(() => {
+          
           introLogo.classList.add("hidden");
           step2();
-        });
-      }, LOGO_HOLD);
+       
+      }, 1000);
+          
+       
+      }, 1000);
 
       function step2() {
         // 2) Show nav + list, animate list IN immediately with GSAP
