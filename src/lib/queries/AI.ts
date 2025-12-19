@@ -22,7 +22,7 @@ export const AI_PAGE_QUERY = /* GraphQL */ `
   query Ai {
     ais {
       id
-      images {
+      images (first:100) {
         image {
           url
         }
