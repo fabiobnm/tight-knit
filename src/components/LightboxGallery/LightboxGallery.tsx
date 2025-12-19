@@ -1,4 +1,4 @@
-// src/components/LightboxGallery.tsx
+// src/components/LightboxGallery/LightboxGallery.tsx
 "use client";
 
 import { useEffect, useState } from "react";
@@ -28,18 +28,16 @@ export default function LightboxGallery({
 
   const src = images[safeIndex];
 
-  useEffect(() => {
-    setVideoError(false);
-  }, [safeIndex]);
-
   const handleNext = () => {
     if (!hasImages) return;
     setCurrent((p) => (p + 1) % images.length);
+    setVideoError(false);
   };
 
   const handlePrev = () => {
     if (!hasImages) return;
     setCurrent((p) => (p - 1 + images.length) % images.length);
+    setVideoError(false);
   };
 
   useEffect(() => {
@@ -95,9 +93,9 @@ export default function LightboxGallery({
           justifyContent: "center",
         }}
       >
-        {/* TRY VIDEO FIRST */}
         {!videoError ? (
           <video
+            key={safeIndex} // 🔥 QUESTO è il fix
             src={src}
             controls
             autoPlay
