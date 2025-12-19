@@ -24,7 +24,7 @@ export default async function DirectorsPage() {
   return (
     <div>
       <Header />
-      <main style={{marginTop:'100px'}} className="mx-auto max-w-5xl px-4 py-8">
+      <main style={{marginTop:'30vH', marginBottom:'20vH'}} className="mx-auto max-w-5xl px-4 py-8">
         <DirectorsList directors={directors} />
       </main>
     </div>

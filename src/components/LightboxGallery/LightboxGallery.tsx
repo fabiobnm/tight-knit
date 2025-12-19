@@ -131,7 +131,7 @@ export default function LightboxGallery({
             color: "white",
             border: "none",
             cursor: "pointer",
-            fontSize: 12,
+            fontSize: 20,
           }}
         >
           X

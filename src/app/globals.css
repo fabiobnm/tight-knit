@@ -39,6 +39,7 @@ textarea:focus, input:focus, button:focus{
 ::-webkit-scrollbar-track {
   background:transparent; 
 }
+
  
 /* Handle */
 ::-webkit-scrollbar-thumb {
