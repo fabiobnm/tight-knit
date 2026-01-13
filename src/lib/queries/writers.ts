@@ -1,5 +1,5 @@
 export type WriterBio = {
-  markdown: string | null;
+  html: string | null;
 };
 
 export type Image = {
