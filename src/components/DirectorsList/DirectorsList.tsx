@@ -136,8 +136,10 @@ export default function DirectorsList({ directors }: Props) {
                     }}
                   >
                     <div>About {director.name}</div>
-                    <div style={{ position: "absolute", bottom: 0 }}>
-                      {director.info?.markdown}
+                    <div style={{ position: "absolute", bottom: '37px' }}>
+                      {director.info?.markdown} <br /> <br />
+                      to book {director.name.split(" ")[0].toLowerCase()
+                      .replace(/^./, c => c.toUpperCase())} please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
                     </div>
                   </div>
 

@@ -1,7 +1,7 @@
 // src/components/LightboxGallery/LightboxGallery.tsx
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 
 type LightboxGalleryProps = {
   images: string[];
@@ -20,6 +20,7 @@ export default function LightboxGallery({
 }: LightboxGalleryProps) {
   const [current, setCurrent] = useState(initialIndex);
   const [videoError, setVideoError] = useState(false);
+  const wheelLock = useRef(false);
 
   const hasImages = images && images.length > 0;
   const safeIndex = hasImages
@@ -40,6 +41,30 @@ export default function LightboxGallery({
     setVideoError(false);
   };
 
+  // 🔥 SCROLL ORIZZONTALE
+  const handleWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    if (wheelLock.current || images.length <= 1) return;
+
+    const delta = Math.abs(e.deltaX) > Math.abs(e.deltaY)
+      ? e.deltaX
+      : e.deltaY;
+
+    if (Math.abs(delta) < 30) return;
+
+    wheelLock.current = true;
+
+    if (delta > 0) {
+      handleNext();
+    } else {
+      handlePrev();
+    }
+
+    setTimeout(() => {
+      wheelLock.current = false;
+    }, 400); // debounce
+  };
+
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -48,7 +73,7 @@ export default function LightboxGallery({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  });
+  }, []);
 
   if (!hasImages) return null;
 
@@ -84,6 +109,7 @@ export default function LightboxGallery({
       {/* CONTENT */}
       <div
         onClick={(e) => e.stopPropagation()}
+        onWheel={handleWheel}
         style={{
           position: "relative",
           maxWidth: "90vw",
@@ -95,7 +121,7 @@ export default function LightboxGallery({
       >
         {!videoError ? (
           <video
-            key={safeIndex} // 🔥 QUESTO è il fix
+            key={safeIndex}
             src={src}
             controls
             autoPlay
@@ -104,7 +130,7 @@ export default function LightboxGallery({
             preload="metadata"
             style={{
               maxWidth: "100%",
-              maxHeight: "80vH",
+              maxHeight: "80vh",
             }}
             onError={() => setVideoError(true)}
           />
@@ -114,7 +140,7 @@ export default function LightboxGallery({
             alt=""
             style={{
               maxWidth: "100%",
-              maxHeight: "80vH",
+              maxHeight: "80vh",
               objectFit: "contain",
             }}
           />

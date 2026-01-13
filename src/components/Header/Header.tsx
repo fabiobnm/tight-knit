@@ -13,9 +13,10 @@ export default function Header() {
 
 
   const navItems = [
-    { href: "/directors", label: "DIRECTORS" },
-    { href: "/about", label: "ABOUT" },
+    { href: "/creatives", label: "CREATIVES" },
+    { href: "/writers", label: "WRITERS" },
     { href: "/AI", label: "AI" },
+    { href: "/about", label: "ABOUT" },
     { href: "/contact", label: "CONTACT" },
   ];
 
@@ -41,7 +42,7 @@ export default function Header() {
 
         {/* Nav */}
         <nav
-          style={{ position:'fixed', display:'flex', gap:'10vw', paddingRight:'10vw', fontSize:'11px', marginLeft:'50%', top:'20px'}}
+          style={{ position:'fixed', display:'flex', gap:'10vw', paddingRight:'10vw', fontSize:'11px', marginLeft:'40%', top:'20px'}}
         >
            {navItems.map((item) => {
             const isCurrent = pathname === item.href;

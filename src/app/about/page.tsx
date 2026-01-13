@@ -18,32 +18,22 @@ export default async function AboutPage() {
     <div>
       <Header />
       <main style={{ marginTop: "50vH",transform:'translateY(-50%)', padding: "0 20px" }}>
-        <div  style={{display:'flex'}}>
           <div
             style={{
               maxWidth: "50vW",
               lineHeight: 1.3,
-              paddingRight:'50px'
+              margin:'auto',
+              textAlign:'center'
             }}
           >
          <p className="contactTitle"> ABOUT US</p> <br />
           
           <div dangerouslySetInnerHTML={{ __html: about?.aboutUs?.html ?? "Nessun contenuto AboutUs trovato." }}/>
-      
-           
-</div>
-            <div >
+          </div>
        
 
-  <div>
-   <p className="contactTitle2"> WHAT WE DO</p> <br />
-   <div className="servicesText"
-    >{about?.services}</div>
-    
-  </div>
+
            
-          </div>
-        </div>
       </main>
     </div>
   );
