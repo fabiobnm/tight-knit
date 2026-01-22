@@ -1,7 +1,7 @@
 // src/components/LightboxGallery/LightboxGallery.tsx
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 
 type LightboxGalleryProps = {
   images: string[];
@@ -25,32 +25,39 @@ export default function LightboxGallery({
   const wheelLocked = useRef(false);
   const lastWheelDir = useRef<1 | -1 | null>(null);
 
-  // scroll to index
-  const goTo = (i: number) => {
+  // 👉 SOLO scroll DOM, NO setState
+  const scrollToIndex = useCallback((i: number, smooth = true) => {
     const el = scrollerRef.current;
     if (!el) return;
 
-    const clamped = Math.max(0, Math.min(images.length - 1, i));
-    setIndex(clamped);
-
     el.scrollTo({
-      left: clamped * el.clientWidth,
-      behavior: "smooth",
+      left: i * el.clientWidth,
+      behavior: smooth ? "smooth" : "auto",
     });
-
-    wheelLocked.current = true;
-    setTimeout(() => {
-      wheelLocked.current = false;
-      lastWheelDir.current = null;
-    }, 350);
-  };
-
-  // initial position
-  useEffect(() => {
-    goTo(initialIndex);
   }, []);
 
-  // keyboard
+  // 👉 cambia slide (questa sì aggiorna lo stato)
+  const goTo = useCallback(
+    (i: number) => {
+      const clamped = Math.max(0, Math.min(images.length - 1, i));
+      setIndex(clamped);
+      scrollToIndex(clamped);
+      wheelLocked.current = true;
+
+      setTimeout(() => {
+        wheelLocked.current = false;
+        lastWheelDir.current = null;
+      }, 350);
+    },
+    [images.length, scrollToIndex]
+  );
+
+  // posizione iniziale (NO setState)
+  useEffect(() => {
+    scrollToIndex(initialIndex, false);
+  }, [initialIndex, scrollToIndex]);
+
+  // tastiera
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -59,25 +66,22 @@ export default function LightboxGallery({
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [index]);
+  }, [index, goTo, onClose]);
 
-  // wheel → UNA slide
+  // wheel = UNA slide
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
     if (wheelLocked.current) return;
 
-    const delta = Math.abs(e.deltaY) > Math.abs(e.deltaX)
-      ? e.deltaY
-      : e.deltaX;
+    const delta =
+      Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 
     if (Math.abs(delta) < 10) return;
 
     const dir: 1 | -1 = delta > 0 ? 1 : -1;
-
-    // evita doppio trigger nello stesso gesto
     if (lastWheelDir.current === dir) return;
-    lastWheelDir.current = dir;
 
+    lastWheelDir.current = dir;
     goTo(index + dir);
   };
 
@@ -158,10 +162,7 @@ export default function LightboxGallery({
                 playsInline
                 controls
                 preload="metadata"
-                style={{
-                  maxWidth: "90vw",
-                  maxHeight: "80vh",
-                }}
+                style={{ maxWidth: "90vw", maxHeight: "80vh" }}
                 onError={() =>
                   setVideoError((p) => ({ ...p, [i]: true }))
                 }
