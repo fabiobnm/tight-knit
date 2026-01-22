@@ -26,6 +26,21 @@
   font-style: normal;
 }
 
+
+.avatarBobble {
+  transform-origin: center ;
+  animation: bobble 0.4s ease-in-out infinite alternate;
+}
+
+@keyframes bobble {
+   from {
+    transform: rotateZ(15deg);
+   }
+  to {
+   transform: rotateZ(-15deg);
+  }
+}
+
 textarea:focus, input:focus, button:focus{
     outline: none;
 }

@@ -78,7 +78,7 @@
 
     .intro-logo svg {
       max-width: min(40vw, 480px);
-      width: 260px;
+      width: 400px;
       height: auto;
       display: block;
     }
@@ -364,38 +364,29 @@
         document.body.style.backgroundColor = 'white'; // cambia colore qui
          document.querySelectorAll('.cls-1').forEach(el => {
     });
-  }, 1000);
-    // Random disappearance of text characters (used for services)
-    function letterDisappear(element, interval = 120) {
-      const originalText = element.textContent;
-      const trimmed = originalText;
-      element.textContent = "";
+  }, 2000);
+   
 
-      const spans = [];
-      for (let i = 0; i < trimmed.length; i++) {
-        const span = document.createElement("span");
-        span.textContent = trimmed[i];
-        span.className = "char";
-        element.appendChild(span);
-        spans.push(span);
-      }
+    /////////////////////////////////////NUOVOOOOOO LETTERE
+    function svgPathsDisappear(svg, interval = 80) {
+  const paths = Array.from(svg.querySelectorAll("path"));
 
-      const indices = spans.map((_, i) => i);
-      for (let i = indices.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [indices[i], indices[j]] = [indices[j], indices[i]];
-      }
+  // shuffle
+  for (let i = paths.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [paths[i], paths[j]] = [paths[j], paths[i]];
+  }
 
-      indices.forEach((idx, i) => {
-        setTimeout(() => {
-          spans[idx].style.visibility = "hidden";
-        }, i * interval);
-      });
+  paths.forEach((path, i) => {
+    setTimeout(() => {
+      path.style.transition = "opacity 0.4s ease, transform 0.4s ease";
+      path.style.opacity = "0";
+    }, i * interval);
+  });
 
-      return new Promise((resolve) => {
-        setTimeout(resolve, indices.length * interval + 80);
-      });
-    }
+  return paths.length * interval + 400;
+}
+//////////////////////////////
 
     window.addEventListener("load", () => {
       const introLogo = document.getElementById("introLogo");
@@ -408,23 +399,17 @@
 
       // 1) Hold logo, then hide SVG parts randomly (slower)
       setTimeout(() => {
+  const duration = svgPathsDisappear(svgElement, 60);
 
-            introLogo.style.opacity='0'
-            introLogo.style.transform='scale(.4)'
-           setTimeout(() => {
-          
-          introLogo.classList.add("hidden");
-       
-      }, 1000);
-        setTimeout(() => {
-          
-          step2();
-       
-      }, 600);
+  setTimeout(() => {
+    introLogo.classList.add("hidden");
+     setTimeout(() => {
+           
+        step2();
+      }, 500);
+  }, duration);
+},1000);
 
-          
-       
-      }, 1000);
 
       function step2() {
         // 2) Show nav + list, animate list IN immediately with GSAP

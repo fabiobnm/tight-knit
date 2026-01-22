@@ -29,24 +29,46 @@ export default function DirectorsList({ directors }: Props) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
 
+  const lastPos = useRef<{ x: number; y: number; t: number } | null>(null);
+  const velocityRef = useRef(0);
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const avatarRef = useRef<HTMLImageElement | null>(null);
 
-  const lastMouseX = useRef<number | null>(null);
+  const distanceRef = useRef(20);        // distanza attuale
+const targetDistanceRef = useRef(20);  // distanza desiderata
 
-const targetRotation = useRef(0);
-const currentRotation = useRef(0);
-const idleTimeout = useRef<number | null>(null);
+useEffect(() => {
+  let raf: number;
+  let angle = 0;
+  let direction = 1;
 
-const rotation = useRef(0);
-const velocity = useRef(0);
-const avatarEl = useRef<HTMLImageElement | null>(null);
-const lastMouse = useRef<{ x: number; t: number } | null>(null);
-const clamp = (v: number, min: number, max: number) =>
-  Math.max(min, Math.min(max, v));
+  const animate = () => {
+    if (avatarRef.current && hoverAvatar) {
+      // easing distanza
+      distanceRef.current +=
+        (targetDistanceRef.current - distanceRef.current) * 0.12;
 
+      // oscillazione
+      const speed = velocityRef.current || 1;
+      angle += direction * speed * 0.15;
+
+      if (angle > speed) direction = -1;
+      if (angle < -speed) direction = 1;
+
+      avatarRef.current.style.transform = `
+        translate(${distanceRef.current}px, 0)
+        rotate(${angle}deg)
+      `;
+    }
+
+    raf = requestAnimationFrame(animate);
+  };
+
+  raf = requestAnimationFrame(animate);
+  return () => cancelAnimationFrame(raf);
+}, [hoverAvatar]);
 
 
 
@@ -86,51 +108,6 @@ const clamp = (v: number, min: number, max: number) =>
     });
   };
 
-  
-
-useEffect(() => {
-  let raf: number;
-
-  const SPRING = 0.12;
-  const DAMPING = 0.82;
-  const MAX_ROTATION = 35;
-
-  const animate = () => {
-    const force = -rotation.current * SPRING;
-
-    velocity.current += force;
-    velocity.current *= DAMPING;
-    rotation.current += velocity.current;
-
-    // clamp
-    rotation.current = clamp(
-      rotation.current,
-      -MAX_ROTATION,
-      MAX_ROTATION
-    );
-
-    // dissipa energia ai limiti
-    if (
-      rotation.current === MAX_ROTATION ||
-      rotation.current === -MAX_ROTATION
-    ) {
-      velocity.current *= 0.4;
-    }
-
-    if (avatarEl.current) {
-      avatarEl.current.style.transform =
-        `rotate(${rotation.current}deg)`;
-    }
-
-    raf = requestAnimationFrame(animate);
-  };
-
-  animate();
-  return () => cancelAnimationFrame(raf);
-}, []);
-
-
-
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
@@ -146,8 +123,6 @@ useEffect(() => {
                   textAlign: "center",
                   fontWeight: 500,
                   margin: 0,
-                  marginInline:'auto',
-                  width:'fit-content'
                 }}
                 onClick={() => handleClickDirector(director.name)}
                 onMouseEnter={(e) => {
@@ -161,39 +136,44 @@ useEffect(() => {
                       });
                     }}
 
-       onMouseMove={(e) => {
-  const now = performance.now();
+             onMouseMove={(e) => {
+                      const now = performance.now();
 
-  if (lastMouse.current) {
-    const dx = e.clientX - lastMouse.current.x;
-    const dt = now - lastMouse.current.t;
+                      if (lastPos.current) {
+                        const dx = e.clientX - lastPos.current.x;
+                        const dy = e.clientY - lastPos.current.y;
+                        const dt = now - lastPos.current.t || 16;
 
-    if (dt > 0) {
-      const speed = dx / dt; // segno incluso
+                        const dist = Math.sqrt(dx * dx + dy * dy);
+                        const velocity = Math.min(dist / dt * 25, 40); // clamp
+                        velocityRef.current = velocity;
 
-      const POWER = 18; // sensibilità
-      velocity.current += speed * POWER;
-    }
-  }
+                        // distanza target (px)
+                        targetDistanceRef.current = 20 + velocity * 2;
 
-  lastMouse.current = { x: e.clientX, t: now };
+                        // clamp: evita valori fuori scala
+                        velocityRef.current = Math.min(velocity * 20, 30);
+                      }
 
-  setHoverAvatar((prev) =>
-    prev
-      ? { ...prev, x: e.clientX, y: e.clientY }
-      : null
-  );
-}}
+                      lastPos.current = {
+                        x: e.clientX,
+                        y: e.clientY,
+                        t: now,
+                      };
+
+                      setHoverAvatar((prev) =>
+                        prev
+                          ? {
+                              ...prev,
+                              x: e.clientX,
+                              y: e.clientY,
+                            }
+                          : null
+                      );
+                    }}
 
 
-
-     onMouseLeave={() => {
-  lastMouse.current = null;
-  setHoverAvatar(null);
-}}
-
-
-
+                onMouseLeave={() => setHoverAvatar(null)}
               >
                 {director.name}
               </h2>
@@ -223,7 +203,6 @@ useEffect(() => {
                   <div
                     style={{
                       minWidth: "25vW",
-                      maxWidth: "25vW",
                       position: "relative",
                       display:'flex',
                       padding: "0 0px 37px 20px",
@@ -275,23 +254,23 @@ useEffect(() => {
       </ul>
 
       {/* Avatar hover che segue il mouse */}
- {hoverAvatar && (
-  <img
-    ref={avatarEl}
-    src={hoverAvatar.url}
-    alt=""
-    style={{
-      position: "fixed",
-      top: hoverAvatar.y - 50,
-      left: hoverAvatar.x + 20,
-      width: "100px",
-      pointerEvents: "none",
-      zIndex: 9999,
-      transformOrigin: "center",
-    }}
-  />
-)}
+   {hoverAvatar && (
+ <img
+  ref={avatarRef}
+  src={hoverAvatar.url}
+  alt=""
+  style={{
+    position: "fixed",
+    top: hoverAvatar.y - 50,
+    left: hoverAvatar.x,
+    width: "100px",
+    pointerEvents: "none",
+    transformOrigin: "left center",
+    zIndex: 9999,
+  }}
+/>
 
+)}
 
 
       {/* Lightbox */}
