@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect } from "react";
 import type { Director, Project } from "@/lib/queries/directors";
 import LightboxGallery from "@/components/LightboxGallery/LightboxGallery";
+import { log } from "node:console";
 
 type Props = {
   directors: Director[];
@@ -32,13 +33,6 @@ export default function DirectorsList({ directors }: Props) {
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  const avatarRef = useRef<HTMLImageElement | null>(null);
-
-  const lastMouseX = useRef<number | null>(null);
-
-const targetRotation = useRef(0);
-const currentRotation = useRef(0);
-const idleTimeout = useRef<number | null>(null);
 
 const rotation = useRef(0);
 const velocity = useRef(0);
@@ -115,6 +109,7 @@ useEffect(() => {
       rotation.current === -MAX_ROTATION
     ) {
       velocity.current *= 0.4;
+      
     }
 
     if (avatarEl.current) {
@@ -236,7 +231,7 @@ useEffect(() => {
                     <div style={{ }}>
                      
                       {director.info?.markdown} <br /> <br />
-                      to book {director.name.split(" ")[0].toLowerCase()
+                      To book {director.name.split(" ")[0].toLowerCase()
                       .replace(/^./, c => c.toUpperCase())} please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
                     </div>
                   </div>
