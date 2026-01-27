@@ -230,25 +230,6 @@
       transform: translateY(0);
     }
 
-    @media (max-width: 640px) {
-      .top-bar {
-        font-size: 0.7rem;
-        letter-spacing: 0.12em;
-      }
-
-      .nav {
-        gap: 100px;
-      }
-
-      .services-list .li-inner {
-        white-space: normal;
-        text-align: center;
-      }
-    }
-
-
-
-
     .menuVoices a {
   text-decoration: none;
   opacity: 1;
@@ -264,6 +245,75 @@
 .menuVoices a:hover {
   opacity: 1;
 }
+
+
+/*     per menu mobile             */
+.buttonHeaderMobile {
+  position: fixed;
+  top: 60px;
+  left: 20px;
+  font-size: 20px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  line-height: 1;
+  display: none;
+}
+
+.HeaderMobile {
+  position: fixed;
+  top: 90px;
+  left: 20px;
+  width: 100vW;
+  background: white;
+  line-height: 3;
+  padding-bottom: 15px;
+  font-size: 11px;
+  display: none;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.HeaderMobile a {
+  opacity: 1;
+  text-decoration: none;
+  color: black;
+  transition: opacity 0.3s;
+}
+
+.HeaderMobile a:hover {
+  opacity: 1;
+}
+
+/* stato aperto */
+.HeaderMobile.is-open {
+  display: flex;
+}
+
+ @media (max-width: 640px) {
+      .top-bar {
+        font-size: 0.7rem;
+        letter-spacing: 0.12em;
+      }
+
+      .nav {
+        gap: 100px;
+      }
+
+      .services-list .li-inner {
+        white-space: normal;
+        text-align: center;
+      }
+
+      .menuVoices{
+        display: none;
+      }
+      .buttonHeaderMobile {
+     display: block;
+      }
+    }
+
+
   </style>
 </head>
 <body>
@@ -327,6 +377,25 @@
             CONTACT
           </a>
         </nav>
+
+
+          <button
+    id="menuToggle"
+    class="buttonHeaderMobile"
+    aria-label="Toggle menu"
+  >
+    +
+  </button>
+
+  <nav id="headerMobile" class="HeaderMobile">
+    <a href="/creatives">CREATIVES</a>
+    <a href="/writers">WRITERS</a>
+    <a href="/AI">AI</a>
+    <a href="/about">ABOUT</a>
+    <a href="/contact">CONTACT</a>
+  </nav>
+
+        
       </div>
     </header>
     <!-- CENTER AREA -->
@@ -476,5 +545,16 @@
       }
     });
   </script>
+
+  <script>
+  const toggle = document.getElementById("menuToggle");
+  const menu = document.getElementById("headerMobile");
+
+  toggle.addEventListener("click", () => {
+    const isOpen = menu.classList.toggle("is-open");
+    toggle.textContent = isOpen ? "−" : "+";
+  });
+</script>
+
 </body>
 </html>
