@@ -1,7 +1,7 @@
 // src/components/WritersList.tsx
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef,  useEffect } from "react";
 import type { Writer } from "@/lib/queries/writers";
 
 type Props = {
@@ -22,6 +22,16 @@ export default function WritersList({ writers }: Props) {
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
+
+const rotation = useRef(0);
+const velocity = useRef(0);
+const avatarEl = useRef<HTMLImageElement | null>(null);
+const lastMouse = useRef<{ x: number; t: number } | null>(null);
+const clamp = (v: number, min: number, max: number) =>
+  Math.max(min, Math.min(max, v));
+
+
+
   const handleClickDirector = (name: string) => {
     if (selectedWriter === name) {
       setSelectedWriter(null);
@@ -34,6 +44,49 @@ export default function WritersList({ writers }: Props) {
       }, 400);
     }
   };
+
+
+useEffect(() => {
+  let raf: number;
+
+  const SPRING = 0.12;
+  const DAMPING = 0.82;
+  const MAX_ROTATION = 35;
+
+  const animate = () => {
+    const force = -rotation.current * SPRING;
+
+    velocity.current += force;
+    velocity.current *= DAMPING;
+    rotation.current += velocity.current;
+
+    // clamp
+    rotation.current = clamp(
+      rotation.current,
+      -MAX_ROTATION,
+      MAX_ROTATION
+    );
+
+    // dissipa energia ai limiti
+    if (
+      rotation.current === MAX_ROTATION ||
+      rotation.current === -MAX_ROTATION
+    ) {
+      velocity.current *= 0.4;
+      
+    }
+
+    if (avatarEl.current) {
+      avatarEl.current.style.transform =
+        `rotate(${rotation.current}deg)`;
+    }
+
+    raf = requestAnimationFrame(animate);
+  };
+
+  animate();
+  return () => cancelAnimationFrame(raf);
+}, []);
 
 
 
@@ -55,26 +108,49 @@ export default function WritersList({ writers }: Props) {
                   textTransform: 'uppercase'
                 }}
                 onClick={() => handleClickDirector(writer.name)}
-                onMouseEnter={(e) => {
-                  if (!writer.avatar?.url) return;
-                  setHoverAvatar({
-                    url: writer.avatar.url,
-                    x: e.clientX,
-                    y: e.clientY,
-                  });
-                }}
-                onMouseMove={(e) => {
-                  setHoverAvatar((prev) =>
-                    prev
-                      ? {
-                          ...prev,
-                          x: e.clientX,
-                          y: e.clientY,
-                        }
-                      : null
-                  );
-                }}
-                onMouseLeave={() => setHoverAvatar(null)}
+                      onMouseEnter={(e) => {
+                      if (isOpen) return; // ← BLOCCO SE È APERTO
+                      if (!writer.avatar?.url) return;
+
+                      setHoverAvatar({
+                        url: writer.avatar.url,
+                        x: e.clientX,
+                        y: e.clientY,
+                      });
+                    }}
+               
+       onMouseMove={(e) => {
+  const now = performance.now();
+
+  if (lastMouse.current) {
+    const dx = e.clientX - lastMouse.current.x;
+    const dt = now - lastMouse.current.t;
+
+    if (dt > 0) {
+      const speed = dx / dt; // segno incluso
+
+      const POWER = 18; // sensibilità
+      velocity.current += speed * POWER;
+    }
+  }
+
+  lastMouse.current = { x: e.clientX, t: now };
+
+  setHoverAvatar((prev) =>
+    prev
+      ? { ...prev, x: e.clientX, y: e.clientY }
+      : null
+  );
+}}
+
+
+
+     onMouseLeave={() => {
+  lastMouse.current = null;
+  setHoverAvatar(null);
+}}
+
+
               >
                 {writer.name}
               </h2>
@@ -97,7 +173,8 @@ export default function WritersList({ writers }: Props) {
                     paddingBottom: "30px",
                     overflowX: "auto",
                     gap: "16px",
-                    height: "15vH",
+                    minHeight: "15vH",
+                    maxHeight:'50vH',
                   }}
                 >
                     <div
@@ -120,21 +197,24 @@ export default function WritersList({ writers }: Props) {
         })}
       </ul>
 
-      {/* Avatar hover che segue il mouse */}
-      {hoverAvatar && (
-        <img
-          src={hoverAvatar.url}
-          alt=""
-          style={{
-            position: "fixed",
-            top: hoverAvatar.y - 50,
-            left: hoverAvatar.x + 20,
-            width: "100px",
-            pointerEvents: "none",
-            zIndex: 9999,
-          }}
-        />
-      )}
+        {/* Avatar hover che segue il mouse */}
+ {hoverAvatar && (
+  <img
+    ref={avatarEl}
+    src={hoverAvatar.url}
+    alt=""
+    style={{
+      position: "fixed",
+      top: hoverAvatar.y - 50,
+      left: hoverAvatar.x + 20,
+      width: "100px",
+      pointerEvents: "none",
+      zIndex: 9999,
+      transformOrigin: "center",
+    }}
+  />
+)}
+
 
    
     </>

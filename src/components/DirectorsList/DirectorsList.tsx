@@ -60,9 +60,10 @@ const clamp = (v: number, min: number, max: number) =>
   const openProjectGallery = (project: Project) => {
     const images: string[] = [];
 
-    if (project.thumbnail?.url) {
+   /* this put the thumbnail in the corousel lightbox
+      if (project.thumbnail?.url) {
       images.push(project.thumbnail.url);
-    }
+    }*/
 
     if (project.gallery?.length) {
       project.gallery.forEach((img) => {
@@ -197,35 +198,17 @@ useEffect(() => {
                 style={{
                   maxHeight: isOpen ? "60vH" : "0px",
                   overflow: "hidden",
-                  transition: "max-height 0.5s ease",
+                  transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
                 }}
               >
-                <div
+                <div className="creativeDiv"
                   ref={(el) => {
                     scrollerRefs.current[director.name] = el;
-                  }}
-                  style={{
-                    display: "flex",
-                    marginTop: "30px",
-                    paddingBottom: "30px",
-                    overflowX: "auto",
-                    gap: "16px",
-                    height: "55vH",
-                  }}
-                >
+                  }} >
+                    
                   {/* About */}
-                  <div
-                    style={{
-                      minWidth: "25vW",
-                      maxWidth: "25vW",
-                      position: "relative",
-                      display:'flex',
-                      padding: "0 0px 37px 20px",
-                      flexDirection: 'column',
-                      justifyContent: 'space-between',
-                    }}
-                  >
+                  <div className="creativeAbout">
                     <div>About {director.name}</div>
                      <img className={` ${isOpen ? "avatarBobble" : ""}`} src={director.avatar?.url} style={{width:'40%'}} alt="" />
                     <div style={{ }}>

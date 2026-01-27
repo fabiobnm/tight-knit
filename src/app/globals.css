@@ -154,9 +154,44 @@ a {
   text-decoration: none;
 }
 
+.creativeAbout{
+    min-width: 25vW;
+    max-width: 25vW;
+    position: relative;
+    display: flex;
+    padding: 0 0px 37px 20px;
+    flex-direction: column;
+    justify-content: space-between;
+}
+.creativeDiv{
+    display: flex;
+    margin-top: 30px;
+    padding-bottom: 30px;
+    overflow-x: auto;
+    gap: 16px;
+    height: 55vH;
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
   }
 }
 
+
+@media (max-width: 600px) {
+  .creativeAbout{
+    min-width: 80vW;
+    max-width: 80vW;
+  
+}
+.nameDirector{
+  font-size: 40px;
+  line-height: 2.5rem;
+}
+.creativeDiv{
+    margin-top: 15px;
+    padding-bottom: 15px;
+
+}
+}
