@@ -25,6 +25,7 @@ export default function DirectorsList({ directors }: Props) {
   const [selectedDirector, setSelectedDirector] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
+  const [isDragging, setIsDragging] = useState(false);
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -38,7 +39,6 @@ export default function DirectorsList({ directors }: Props) {
     Math.max(min, Math.min(max, v));
 
   /* ================= DRAG SCROLL ================= */
-  const isDragging = useRef(false);
   const dragStartX = useRef<number | null>(null);
   const scrollStartX = useRef(0);
   const dragDistance = useRef(0);
@@ -60,11 +60,9 @@ export default function DirectorsList({ directors }: Props) {
   const openProjectGallery = (project: Project) => {
     const images: string[] = [];
 
-    if (project.gallery?.length) {
-      project.gallery.forEach((img) => {
-        if (img?.url) images.push(img.url);
-      });
-    }
+    project.gallery?.forEach((img) => {
+      if (img?.url) images.push(img.url);
+    });
 
     if (!images.length) return;
 
@@ -137,9 +135,7 @@ export default function DirectorsList({ directors }: Props) {
                 }}
                 onClick={() => handleClickDirector(director.name)}
                 onMouseEnter={(e) => {
-                  if (isOpen) return;
-                  if (!director.avatar?.url) return;
-
+                  if (isOpen || !director.avatar?.url) return;
                   setHoverAvatar({
                     url: director.avatar.url,
                     x: e.clientX,
@@ -152,10 +148,7 @@ export default function DirectorsList({ directors }: Props) {
                   if (lastMouse.current) {
                     const dx = e.clientX - lastMouse.current.x;
                     const dt = now - lastMouse.current.t;
-
-                    if (dt > 0) {
-                      velocity.current += (dx / dt) * 18;
-                    }
+                    if (dt > 0) velocity.current += (dx / dt) * 18;
                   }
 
                   lastMouse.current = { x: e.clientX, t: now };
@@ -186,7 +179,7 @@ export default function DirectorsList({ directors }: Props) {
                     scrollerRefs.current[director.name] = el;
                   }}
                   style={{
-                    cursor: isDragging.current ? "grabbing" : "grab",
+                    cursor: isDragging ? "grabbing" : "grab",
                   }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
@@ -195,7 +188,7 @@ export default function DirectorsList({ directors }: Props) {
                     dragStartX.current = e.clientX;
                     scrollStartX.current = el.scrollLeft;
                     dragDistance.current = 0;
-                    isDragging.current = false;
+                    setIsDragging(false);
                   }}
                   onMouseMove={(e) => {
                     const el = scrollerRefs.current[director.name];
@@ -205,15 +198,17 @@ export default function DirectorsList({ directors }: Props) {
                     dragDistance.current = Math.abs(dx);
 
                     if (dragDistance.current > DRAG_THRESHOLD) {
-                      isDragging.current = true;
+                      setIsDragging(true);
                       el.scrollLeft = scrollStartX.current - dx;
                     }
                   }}
                   onMouseUp={() => {
                     dragStartX.current = null;
+                    setIsDragging(false);
                   }}
                   onMouseLeave={() => {
                     dragStartX.current = null;
+                    setIsDragging(false);
                   }}
                 >
                   {/* About */}
@@ -230,11 +225,7 @@ export default function DirectorsList({ directors }: Props) {
                       <br />
                       <br />
                       To book{" "}
-                      {director.name
-                        .split(" ")[0]
-                        .toLowerCase()
-                        .replace(/^./, (c) => c.toUpperCase())}{" "}
-                      please{" "}
+                      {director.name.split(" ")[0]} please{" "}
                       <a href="/contact" style={{ textDecoration: "underline" }}>
                         contact us
                       </a>
@@ -247,7 +238,7 @@ export default function DirectorsList({ directors }: Props) {
                       key={`${project.title}-${index}`}
                       className="projectDiv"
                       onMouseUp={() => {
-                        if (isDragging.current) return;
+                        if (isDragging) return;
                         openProjectGallery(project);
                       }}
                     >
