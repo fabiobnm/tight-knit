@@ -31,7 +31,18 @@
   transform-origin: center ;
   animation: bobble 0.4s ease-in-out infinite alternate;
 }
-
+.voiceMenuDesktop{
+    position: fixed;
+    display: flex;
+    gap: 10vw;
+    padding-right: 10vw;
+    font-size: 11px;
+    margin-left: 40%;
+    top: 20px;
+}
+.buttonHeaderMobile{
+  display: none;
+}
 @keyframes bobble {
    from {
     transform: rotateZ(15deg);
@@ -139,7 +150,14 @@ div{
     height: -webkit-fill-available;
     margin-bottom: 12px;
     display: block;
+    user-select: none;
+    -webkit-user-drag: none;
 }
+
+.creativeDiv > .projectDiv:last-child {
+  margin-right: 16px;
+}
+
 .projectText{
   font-size: 10px;
 }
@@ -193,5 +211,14 @@ a {
     margin-top: 15px;
     padding-bottom: 15px;
 
+}
+.projectThumbnail{
+  max-width: 90vW;
+}
+.voiceMenuDesktop{
+  display: none;
+}
+.buttonHeaderMobile{
+  display: block;
 }
 }

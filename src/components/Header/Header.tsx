@@ -10,6 +10,8 @@ import { useState } from "react";
 export default function Header() {
   const pathname = usePathname();
     const [hovered, setHovered] = useState<string | null>(null);
+      const [menuOpen, setMenuOpen] = useState(false);
+
 
 
   const navItems = [
@@ -41,9 +43,7 @@ export default function Header() {
         </Link>
 
         {/* Nav */}
-        <nav
-          style={{ position:'fixed', display:'flex', gap:'10vw', paddingRight:'10vw', fontSize:'11px', marginLeft:'40%', top:'20px'}}
-        >
+        <nav className="voiceMenuDesktop">
            {navItems.map((item) => {
             const isCurrent = pathname === item.href;
             const isHovered = hovered === item.href;
@@ -66,6 +66,70 @@ export default function Header() {
             );
           })}
         </nav>
+
+
+
+        {/* Toggle button */}
+        <button className="buttonHeaderMobile"
+          onClick={() => setMenuOpen((v) => !v)}
+          style={{
+             position: "fixed",
+              top: "60px",
+              left: "20px",
+            color:'black',
+            marginLeft: "auto",
+            fontSize: "20px",
+            background: "none",
+            border: "none",
+            cursor: "pointer",
+            lineHeight: 1,
+          }}
+          aria-label="Toggle menu"
+        >
+          {menuOpen ? "−" : "+"}
+        </button>
+
+        {/* Nav */}
+        {menuOpen && (
+          <nav className="HeaderMobile"
+            style={{
+              position: "fixed",
+              top: "90px",
+              lineHeight:'3',
+              width:'100%',
+              background:'white',
+              paddingBottom:'15px',
+              left: "20px",
+              display: "flex",
+              flexDirection: "column",
+              gap: "12px",
+              fontSize: "11px",
+            }}
+          >
+            {navItems.map((item) => {
+              const isCurrent = pathname === item.href;
+              const isHovered = hovered === item.href;
+              const opacity = isCurrent || isHovered ? 1 : 0.3;
+
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  onMouseEnter={() => setHovered(item.href)}
+                  onMouseLeave={() => setHovered(null)}
+                  onClick={() => setMenuOpen(false)}
+                  style={{
+                    opacity,
+                    transition: "opacity 0.3s",
+                    cursor: "pointer",
+                  }}
+                >
+                  {item.label}
+                </Link>
+              );
+            })}
+          </nav>
+        )}
       </div>
     </header>
   );
