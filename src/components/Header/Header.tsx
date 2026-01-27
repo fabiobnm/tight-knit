@@ -1,18 +1,16 @@
-// src/components/Header.tsx
 "use client";
 
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-
+import { useState, useRef, useEffect } from "react";
 
 export default function Header() {
   const pathname = usePathname();
-    const [hovered, setHovered] = useState<string | null>(null);
-      const [menuOpen, setMenuOpen] = useState(false);
+  const [hovered, setHovered] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-
+  const headerRef = useRef<HTMLDivElement | null>(null);
 
   const navItems = [
     { href: "/creatives", label: "CREATIVES" },
@@ -22,9 +20,27 @@ export default function Header() {
     { href: "/contact", label: "CONTACT" },
   ];
 
+  /* ===== CLICK OUTSIDE ===== */
+  useEffect(() => {
+    if (!menuOpen) return;
+
+    const handleClickOutside = (e: MouseEvent) => {
+      if (
+        headerRef.current &&
+        !headerRef.current.contains(e.target as Node)
+      ) {
+        setMenuOpen(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [menuOpen]);
+
   return (
     <header>
       <div
+        ref={headerRef}
         style={{
           display: "flex",
           padding: "20px",
@@ -35,16 +51,23 @@ export default function Header() {
           width: "100vw",
           zIndex: 99,
           alignItems: "center",
+          background: menuOpen ? "white" : "transparent",
         }}
       >
-        {/* Logo / Brand */}
+        {/* Logo */}
         <Link href="/">
-          <Image src="/Logo.svg" alt="Next.js logo" width={150} height={25} priority />
+          <Image
+            src="/Logo.svg"
+            alt="Logo"
+            width={150}
+            height={25}
+            priority
+          />
         </Link>
 
-        {/* Nav */}
+        {/* Desktop nav */}
         <nav className="voiceMenuDesktop">
-           {navItems.map((item) => {
+          {navItems.map((item) => {
             const isCurrent = pathname === item.href;
             const isHovered = hovered === item.href;
             const opacity = isCurrent || isHovered ? 1 : 0.2;
@@ -58,7 +81,6 @@ export default function Header() {
                 style={{
                   opacity,
                   transition: "opacity 0.3s",
-                  cursor: "pointer",
                 }}
               >
                 {item.label}
@@ -67,43 +89,48 @@ export default function Header() {
           })}
         </nav>
 
-
-
         {/* Toggle button */}
-        <button className="buttonHeaderMobile"
+        <button
+          className="buttonHeaderMobile"
           onClick={() => setMenuOpen((v) => !v)}
           style={{
-             position: "fixed",
-              top: "60px",
-              left: "20px",
-            color:'black',
-            marginLeft: "auto",
+            position: "fixed",
+            top: "53px",
+            height: "38px",
+            width: "100vw",
+            textAlign: "left",
+            left: 0,
+            paddingLeft: "20px",
+            color: "black",
             fontSize: "20px",
-            background: "none",
+            background: menuOpen ? "white" : "transparent",
             border: "none",
             cursor: "pointer",
             lineHeight: 1,
+            zIndex: 100,
           }}
           aria-label="Toggle menu"
         >
           {menuOpen ? "−" : "+"}
         </button>
 
-        {/* Nav */}
+        {/* Mobile nav */}
         {menuOpen && (
-          <nav className="HeaderMobile"
+          <nav
+            className="HeaderMobile"
             style={{
               position: "fixed",
               top: "90px",
-              lineHeight:'3',
-              width:'100%',
-              background:'white',
-              paddingBottom:'15px',
-              left: "20px",
+              width: "100%",
+              background: "white",
+              paddingBottom: "15px",
+              left: 0,
+              paddingLeft: "20px",
               display: "flex",
               flexDirection: "column",
               gap: "12px",
               fontSize: "11px",
+              lineHeight: 3,
             }}
           >
             {navItems.map((item) => {
@@ -121,7 +148,6 @@ export default function Header() {
                   style={{
                     opacity,
                     transition: "opacity 0.3s",
-                    cursor: "pointer",
                   }}
                 >
                   {item.label}
@@ -134,19 +160,3 @@ export default function Header() {
     </header>
   );
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
