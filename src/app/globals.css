@@ -213,7 +213,7 @@ a {
 
 }
 .projectThumbnail{
-  max-width: 90vW;
+ /* max-width: 90vW;*/
 }
 .voiceMenuDesktop{
   display: none;

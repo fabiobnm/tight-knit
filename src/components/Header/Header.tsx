@@ -55,8 +55,11 @@ export default function Header() {
         }}
       >
         {/* Logo */}
-        <Link href="/">
+        <Link style={{ outline: "none",
+            boxShadow: "none",
+            WebkitTapHighlightColor: "transparent",}} href="/">
           <Image
+            
             src="/Logo.svg"
             alt="Logo"
             width={150}
@@ -108,6 +111,9 @@ export default function Header() {
             cursor: "pointer",
             lineHeight: 1,
             zIndex: 100,
+            outline: "none",
+            boxShadow: "none",
+            WebkitTapHighlightColor: "transparent",
           }}
           aria-label="Toggle menu"
         >
@@ -148,6 +154,9 @@ export default function Header() {
                   style={{
                     opacity,
                     transition: "opacity 0.3s",
+                     outline: "none",
+            boxShadow: "none",
+            WebkitTapHighlightColor: "transparent",
                   }}
                 >
                   {item.label}
