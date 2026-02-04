@@ -76,6 +76,7 @@ export default function LightboxGallery({
 
   return (
     <div
+    onClick={onClose}
       style={{
         position: 'fixed',
         inset: 0,
@@ -118,7 +119,7 @@ export default function LightboxGallery({
 
       {/* Pulsanti avanti/indietro */}
       <button
-        onClick={goPrev}
+        onClick={(e) => { e.stopPropagation(); goPrev(); }}
         style={{
           position: 'fixed',
           left: 16,
@@ -136,7 +137,7 @@ export default function LightboxGallery({
         ‹
       </button>
       <button
-        onClick={goNext}
+        onClick={(e) => { e.stopPropagation(); goNext(); }}
         style={{
           position: 'fixed',
           right: 16,
@@ -181,19 +182,20 @@ export default function LightboxGallery({
             }}
           >
             <img
+            onClick={(e) => e.stopPropagation()}
               src={src}
               alt=""
               draggable={false}
               style={{
-                maxWidth: '100%',
-                maxHeight: '80vh',
+                width: '96%',
+                
                 objectFit: 'contain',
                 userSelect: 'none',
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
               loading="eager"
-              onClick={onClose}
+              
             />
           </div>
         ))}
