@@ -26,7 +26,6 @@ export default function DirectorsList({ directors }: Props) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
-  const [canHover, setCanHover] = useState(false);
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -46,15 +45,20 @@ export default function DirectorsList({ directors }: Props) {
   const DRAG_THRESHOLD = 6;
 
   /* ================= HOVER DETECTION ================= */
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setCanHover(mq.matches);
+const [canHover, setCanHover] = useState(() => {
+  if (typeof window !== "undefined") {
+    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  }
+  return false;
+});
 
-    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
-    mq.addEventListener("change", handler);
+useEffect(() => {
+  const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+  mq.addEventListener("change", handler);
 
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+  return () => mq.removeEventListener("change", handler);
+}, []);
 
   const handleClickDirector = (name: string) => {
     // quando clicco un director, l'avatar hover scompare
