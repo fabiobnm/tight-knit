@@ -189,6 +189,10 @@ a {
     gap: 16px;
     height: 55vH;
 }
+.lightbox-container {
+  overscroll-behavior-x: contain; /* evita back/forward */
+  overscroll-behavior-y: contain; /* evita scroll “rubato” */
+}
 
 @media (prefers-color-scheme: dark) {
   html {
