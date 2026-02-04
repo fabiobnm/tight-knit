@@ -25,13 +25,19 @@ export default function LightboxGallery({
   const [videoReady, setVideoReady] = useState<Record<number, boolean>>({});
 
   // =========================
-  // WHEEL LOCK SYSTEM
+  // WHEEL LOCK
   // =========================
   const wheelAccum = useRef(0);
   const wheelActive = useRef(false);
 
   // =========================
-  // SCROLL ONLY (NO STATE)
+  // SWIPE LOCK
+  // =========================
+  const pointerStartX = useRef<number | null>(null);
+  const swipeActive = useRef(false);
+
+  // =========================
+  // SCROLL ONLY
   // =========================
   const scrollToIndex = useCallback((i: number, smooth = true) => {
     const el = scrollerRef.current;
@@ -76,7 +82,7 @@ export default function LightboxGallery({
   }, [index, goTo, onClose]);
 
   // =========================
-  // WHEEL HANDLER (1 gesture = 1 slide)
+  // WHEEL HANDLER
   // =========================
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
@@ -93,17 +99,13 @@ export default function LightboxGallery({
 
     if (Math.abs(wheelAccum.current) >= THRESHOLD) {
       const dir: 1 | -1 = wheelAccum.current > 0 ? 1 : -1;
-
       wheelActive.current = true;
       wheelAccum.current = 0;
-
       goTo(index + dir);
     }
   };
 
-  // =========================
-  // RESET WHEEL WHEN USER STOPS
-  // =========================
+  // reset wheel
   useEffect(() => {
     let t: number | null = null;
 
@@ -112,7 +114,7 @@ export default function LightboxGallery({
       t = window.setTimeout(() => {
         wheelActive.current = false;
         wheelAccum.current = 0;
-      }, 100);
+      }, 120);
     };
 
     window.addEventListener("wheel", resetWheel, { passive: true });
@@ -121,6 +123,35 @@ export default function LightboxGallery({
       window.removeEventListener("wheel", resetWheel);
     };
   }, []);
+
+  // =========================
+  // SWIPE HANDLERS
+  // =========================
+  const handlePointerDown = (e: React.PointerEvent) => {
+    pointerStartX.current = e.clientX;
+    swipeActive.current = false;
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (pointerStartX.current === null) return;
+    if (swipeActive.current) return;
+
+    const deltaX = e.clientX - pointerStartX.current;
+    const THRESHOLD = 60;
+
+    if (Math.abs(deltaX) >= THRESHOLD) {
+      swipeActive.current = true;
+      pointerStartX.current = null;
+
+      const dir: 1 | -1 = deltaX < 0 ? 1 : -1;
+      goTo(index + dir);
+    }
+  };
+
+  const endPointer = () => {
+    pointerStartX.current = null;
+    swipeActive.current = false;
+  };
 
   if (!images.length) return null;
 
@@ -172,12 +203,17 @@ export default function LightboxGallery({
       <div
         ref={scrollerRef}
         onWheel={handleWheel}
+        onPointerDown={handlePointerDown}
+        onPointerMove={handlePointerMove}
+        onPointerUp={endPointer}
+        onPointerCancel={endPointer}
         onClick={(e) => e.stopPropagation()}
         style={{
           height: "100%",
           display: "flex",
           overflow: "hidden",
           overscrollBehavior: "contain",
+          touchAction: "pan-y",
         }}
       >
         {images.map((src, i) => (
