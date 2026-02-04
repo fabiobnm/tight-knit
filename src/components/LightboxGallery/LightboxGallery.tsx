@@ -19,6 +19,16 @@ export default function LightboxGallery({
 }: LightboxGalleryProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
   const [index, setIndex] = useState(initialIndex);
+  const [viewportWidth, setViewportWidth] = useState(
+    typeof window !== 'undefined' ? window.innerWidth : 0
+  );
+
+  // Aggiorna larghezza viewport
+  useEffect(() => {
+    const handleResize = () => setViewportWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Preload immagini
   useEffect(() => {
@@ -28,13 +38,13 @@ export default function LightboxGallery({
     });
   }, [images]);
 
-  // Imposta scroll iniziale
+  // Scroll iniziale
   useEffect(() => {
     const el = scrollerRef.current;
     if (el) {
-      el.scrollTo({ left: initialIndex * el.clientWidth, behavior: 'auto' });
+      el.scrollTo({ left: initialIndex * viewportWidth, behavior: 'auto' });
     }
-  }, [initialIndex]);
+  }, [initialIndex, viewportWidth]);
 
   // Aggiorna indice corrente al scroll
   useEffect(() => {
@@ -42,24 +52,24 @@ export default function LightboxGallery({
     if (!el) return;
 
     const onScroll = () => {
-      const newIndex = Math.round(el.scrollLeft / el.clientWidth);
+      const newIndex = Math.round(el.scrollLeft / viewportWidth);
       setIndex(newIndex);
     };
 
     el.addEventListener('scroll', onScroll, { passive: true });
     return () => el.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [viewportWidth]);
 
   // Pulsanti avanti/indietro
   const goNext = () => {
     const el = scrollerRef.current;
     if (!el) return;
-    el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+    el.scrollBy({ left: viewportWidth, behavior: 'smooth' });
   };
   const goPrev = () => {
     const el = scrollerRef.current;
     if (!el) return;
-    el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
+    el.scrollBy({ left: -viewportWidth, behavior: 'smooth' });
   };
 
   if (!images.length) return null;
@@ -153,8 +163,8 @@ export default function LightboxGallery({
           scrollSnapType: 'x mandatory',
           width: '100%',
           height: '100%',
-          touchAction: 'pan-y',
-          WebkitOverflowScrolling: 'touch', // smooth iOS
+          touchAction: 'pan-x',
+          WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'contain',
           overscrollBehaviorY: 'contain',
         }}
@@ -163,7 +173,7 @@ export default function LightboxGallery({
           <div
             key={i}
             style={{
-              flex: '0 0 100%',
+              flex: `0 0 ${viewportWidth}px`,
               scrollSnapAlign: 'center',
               display: 'flex',
               justifyContent: 'center',
@@ -175,14 +185,15 @@ export default function LightboxGallery({
               alt=""
               draggable={false}
               style={{
-                maxWidth: '90vw',
+                maxWidth: '100%',
                 maxHeight: '80vh',
+                objectFit: 'contain',
                 userSelect: 'none',
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
               loading="eager"
-              onClick={onClose} // chiude click su immagine
+              onClick={onClose}
             />
           </div>
         ))}
