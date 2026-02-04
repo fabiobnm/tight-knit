@@ -1,6 +1,6 @@
 'use client';
 
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type LightboxGalleryProps = {
   images: string[];
@@ -18,184 +18,50 @@ export default function LightboxGallery({
   client,
 }: LightboxGalleryProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
-
   const [index, setIndex] = useState(initialIndex);
-  const isTransitioning = useRef(false);
 
-  // wheel
-  const wheelAccum = useRef(0);
-  const WHEEL_THRESHOLD = 120;
-
-  // swipe
-  const touchStartX = useRef(0);
-  const touchDeltaX = useRef(0);
-  const SWIPE_THRESHOLD = 50;
-
-  // drag vs click
-  const isDragging = useRef(false);
-
-  /* -------------------------
-   * GO TO SLIDE
-   * ------------------------ */
-  const goTo = useCallback(
-    (i: number) => {
-      const el = scrollerRef.current;
-      if (!el) return;
-
-      const clamped = Math.max(0, Math.min(images.length - 1, i));
-      if (clamped === index) return;
-
-      isTransitioning.current = true;
-      setIndex(clamped);
-
-      el.scrollTo({
-        left: clamped * el.clientWidth,
-        behavior: 'smooth',
-      });
-    },
-    [images.length, index]
-  );
-
-  /* -------------------------
-   * INITIAL SCROLL
-   * ------------------------ */
+  // Preload immagini
   useEffect(() => {
-    const el = scrollerRef.current;
-    if (!el) return;
-    el.scrollTo({
-      left: initialIndex * el.clientWidth,
-      behavior: 'auto',
-    });
-
-    // preload immagini
     images.forEach((src) => {
       const img = new Image();
       img.src = src;
     });
-  }, [initialIndex, images]);
+  }, [images]);
 
-  /* -------------------------
-   * UNLOCK after scroll
-   * ------------------------ */
+  // Imposta scroll iniziale
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (el) {
+      el.scrollTo({ left: initialIndex * el.clientWidth, behavior: 'auto' });
+    }
+  }, [initialIndex]);
+
+  // Aggiorna indice corrente al scroll
   useEffect(() => {
     const el = scrollerRef.current;
     if (!el) return;
 
-    let timeout: number | null = null;
-
     const onScroll = () => {
-      if (timeout) window.clearTimeout(timeout);
-      timeout = window.setTimeout(() => {
-        isTransitioning.current = false;
-        wheelAccum.current = 0;
-      }, 80);
+      const newIndex = Math.round(el.scrollLeft / el.clientWidth);
+      setIndex(newIndex);
     };
 
     el.addEventListener('scroll', onScroll, { passive: true });
-
-    return () => {
-      el.removeEventListener('scroll', onScroll);
-      if (timeout) window.clearTimeout(timeout);
-    };
+    return () => el.removeEventListener('scroll', onScroll);
   }, []);
 
-  /* -------------------------
-   * WHEEL
-   * ------------------------ */
-  useEffect(() => {
+  // Pulsanti avanti/indietro
+  const goNext = () => {
     const el = scrollerRef.current;
     if (!el) return;
-
-    const onWheel = (e: WheelEvent) => {
-      if (isTransitioning.current) return;
-
-      e.preventDefault();
-      wheelAccum.current += e.deltaX || e.deltaY;
-
-      if (wheelAccum.current > WHEEL_THRESHOLD) {
-        wheelAccum.current = 0;
-        goTo(index + 1);
-      } else if (wheelAccum.current < -WHEEL_THRESHOLD) {
-        wheelAccum.current = 0;
-        goTo(index - 1);
-      }
-    };
-
-    el.addEventListener('wheel', onWheel, { passive: false });
-
-    return () => {
-      el.removeEventListener('wheel', onWheel);
-    };
-  }, [goTo, index]);
-
-  /* -------------------------
-   * TOUCH / SWIPE
-   * ------------------------ */
-  useEffect(() => {
+    el.scrollBy({ left: el.clientWidth, behavior: 'smooth' });
+  };
+  const goPrev = () => {
     const el = scrollerRef.current;
     if (!el) return;
-
-    const onTouchStart = (e: TouchEvent) => {
-      touchStartX.current = e.touches[0].clientX;
-      touchDeltaX.current = 0;
-      isDragging.current = false;
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      touchDeltaX.current = e.touches[0].clientX - touchStartX.current;
-      if (Math.abs(touchDeltaX.current) > 6) isDragging.current = true;
-    };
-
-    const onTouchEnd = () => {
-      if (isTransitioning.current) return;
-
-      if (touchDeltaX.current > SWIPE_THRESHOLD) goTo(index - 1);
-      else if (touchDeltaX.current < -SWIPE_THRESHOLD) goTo(index + 1);
-
-      touchDeltaX.current = 0;
-      isDragging.current = false;
-    };
-
-    el.addEventListener('touchstart', onTouchStart, { passive: true });
-    el.addEventListener('touchmove', onTouchMove, { passive: true });
-    el.addEventListener('touchend', onTouchEnd);
-
-    return () => {
-      el.removeEventListener('touchstart', onTouchStart);
-      el.removeEventListener('touchmove', onTouchMove);
-      el.removeEventListener('touchend', onTouchEnd);
-    };
-  }, [goTo, index]);
-
-  /* -------------------------
-   * KEYBOARD
-   * ------------------------ */
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (isTransitioning.current) return;
-      if (e.key === 'ArrowRight') goTo(index + 1);
-      if (e.key === 'ArrowLeft') goTo(index - 1);
-      if (e.key === 'Escape') onClose();
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [goTo, index, onClose]);
-
-  /* -------------------------
-   * IMAGE CLICK
-   * ------------------------ */
-  const handleClick = (e: React.MouseEvent) => {
-    if (isDragging.current) {
-      e.stopPropagation();
-      e.preventDefault();
-      return;
-    }
-    onClose();
+    el.scrollBy({ left: -el.clientWidth, behavior: 'smooth' });
   };
 
-  /* -------------------------
-   * RENDER
-   * ------------------------ */
   if (!images.length) return null;
 
   return (
@@ -240,9 +106,9 @@ export default function LightboxGallery({
         ✕
       </button>
 
-      {/* AVANTI / INDIETRO */}
+      {/* Pulsanti avanti/indietro */}
       <button
-        onClick={() => goTo(index - 1)}
+        onClick={goPrev}
         style={{
           position: 'fixed',
           left: 16,
@@ -260,7 +126,7 @@ export default function LightboxGallery({
         ‹
       </button>
       <button
-        onClick={() => goTo(index + 1)}
+        onClick={goNext}
         style={{
           position: 'fixed',
           right: 16,
@@ -283,15 +149,15 @@ export default function LightboxGallery({
         ref={scrollerRef}
         style={{
           display: 'flex',
-          overflowX: 'hidden',
+          overflowX: 'auto',
           scrollSnapType: 'x mandatory',
           width: '100%',
           height: '100%',
           touchAction: 'pan-y',
+          WebkitOverflowScrolling: 'touch', // smooth iOS
           overscrollBehaviorX: 'contain',
           overscrollBehaviorY: 'contain',
         }}
-        onClick={handleClick}
       >
         {images.map((src, i) => (
           <div
@@ -316,12 +182,13 @@ export default function LightboxGallery({
                 cursor: 'pointer',
               }}
               loading="eager"
+              onClick={onClose} // chiude click su immagine
             />
           </div>
         ))}
       </div>
 
-      {/* INDICATOR */}
+      {/* INDICATORE */}
       <div
         style={{
           position: 'fixed',
