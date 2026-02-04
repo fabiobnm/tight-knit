@@ -271,6 +271,7 @@ export default function LightboxGallery({
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
+               loading="eager" // ← forza il caricamento immediato
             />
           </div>
         ))}

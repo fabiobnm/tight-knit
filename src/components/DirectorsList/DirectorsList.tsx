@@ -247,6 +247,7 @@ export default function DirectorsList({ directors }: Props) {
                           className="projectThumbnail"
                           src={project.thumbnail.url}
                           alt={project.title}
+                          loading="eager" // ← forza il caricamento immediato
                         />
                       )}
                       <div className="projectText">
