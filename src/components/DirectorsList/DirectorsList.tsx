@@ -26,6 +26,7 @@ export default function DirectorsList({ directors }: Props) {
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [canHover, setCanHover] = useState(false);
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
@@ -44,7 +45,21 @@ export default function DirectorsList({ directors }: Props) {
   const dragDistance = useRef(0);
   const DRAG_THRESHOLD = 6;
 
+  /* ================= HOVER DETECTION ================= */
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setCanHover(mq.matches);
+
+    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+    mq.addEventListener("change", handler);
+
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
   const handleClickDirector = (name: string) => {
+    // quando clicco un director, l'avatar hover scompare
+    setHoverAvatar(null);
+
     if (selectedDirector === name) {
       setSelectedDirector(null);
     } else {
@@ -122,9 +137,7 @@ export default function DirectorsList({ directors }: Props) {
           return (
             <div key={director.name}>
               <h2
-                className={`nameDirector ${
-                  isOpen ? "nameDirector--active" : ""
-                }`}
+                className={`nameDirector ${isOpen ? "nameDirector--active" : ""}`}
                 style={{
                   cursor: "pointer",
                   textAlign: "center",
@@ -135,6 +148,7 @@ export default function DirectorsList({ directors }: Props) {
                 }}
                 onClick={() => handleClickDirector(director.name)}
                 onMouseEnter={(e) => {
+                  if (!canHover) return; // NO hover su mobile
                   if (isOpen || !director.avatar?.url) return;
                   setHoverAvatar({
                     url: director.avatar.url,
@@ -143,6 +157,8 @@ export default function DirectorsList({ directors }: Props) {
                   });
                 }}
                 onMouseMove={(e) => {
+                  if (!canHover) return; // NO hover su mobile
+
                   const now = performance.now();
 
                   if (lastMouse.current) {
@@ -224,8 +240,7 @@ export default function DirectorsList({ directors }: Props) {
                       {director.info?.markdown}
                       <br />
                       <br />
-                      To book{" "}
-                      {director.name.split(" ")[0]} please{" "}
+                      To book {director.name.split(" ")[0]} please{" "}
                       <a href="/contact" style={{ textDecoration: "underline" }}>
                         contact us
                       </a>
@@ -247,7 +262,7 @@ export default function DirectorsList({ directors }: Props) {
                           className="projectThumbnail"
                           src={project.thumbnail.url}
                           alt={project.title}
-                          loading="eager" // ← forza il caricamento immediato
+                          loading="eager" // forza il caricamento immediato
                         />
                       )}
                       <div className="projectText">
@@ -265,7 +280,7 @@ export default function DirectorsList({ directors }: Props) {
       </ul>
 
       {/* Avatar hover */}
-      {hoverAvatar && (
+      {canHover && hoverAvatar && (
         <img
           ref={avatarEl}
           src={hoverAvatar.url}
