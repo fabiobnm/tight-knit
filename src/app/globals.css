@@ -189,6 +189,9 @@ a {
     gap: 16px;
     height: 55vH;
 }
+.carousel-item{
+   scroll-snap-align: start;
+}
 .lightbox-container {
   overscroll-behavior-x: contain; /* evita back/forward */
   overscroll-behavior-y: contain; /* evita scroll “rubato” */

@@ -251,6 +251,7 @@ export default function LightboxGallery({
       >
         {images.map((src, i) => (
           <div
+            className='carousel-item'
             key={i}
             style={{
               flex: '0 0 100%',
