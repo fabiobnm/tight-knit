@@ -19,13 +19,20 @@ export default function LightboxGallery({
   client,
 }: LightboxGalleryProps) {
   const scrollerRef = useRef<HTMLDivElement | null>(null);
+
   const [index, setIndex] = useState(initialIndex);
   const [videoError, setVideoError] = useState<Record<number, boolean>>({});
+  const [videoReady, setVideoReady] = useState<Record<number, boolean>>({});
 
-  const wheelLocked = useRef(false);
-  const lastWheelDir = useRef<1 | -1 | null>(null);
+  // =========================
+  // WHEEL LOCK SYSTEM
+  // =========================
+  const wheelAccum = useRef(0);
+  const wheelActive = useRef(false);
 
-  // 👉 SOLO scroll DOM, NO setState
+  // =========================
+  // SCROLL ONLY (NO STATE)
+  // =========================
   const scrollToIndex = useCallback((i: number, smooth = true) => {
     const el = scrollerRef.current;
     if (!el) return;
@@ -36,28 +43,28 @@ export default function LightboxGallery({
     });
   }, []);
 
-  // 👉 cambia slide (questa sì aggiorna lo stato)
+  // =========================
+  // CHANGE SLIDE
+  // =========================
   const goTo = useCallback(
     (i: number) => {
       const clamped = Math.max(0, Math.min(images.length - 1, i));
       setIndex(clamped);
       scrollToIndex(clamped);
-      wheelLocked.current = true;
-
-      setTimeout(() => {
-        wheelLocked.current = false;
-        lastWheelDir.current = null;
-      }, 350);
     },
     [images.length, scrollToIndex]
   );
 
-  // posizione iniziale (NO setState)
+  // =========================
+  // INITIAL POSITION
+  // =========================
   useEffect(() => {
     scrollToIndex(initialIndex, false);
   }, [initialIndex, scrollToIndex]);
 
-  // tastiera
+  // =========================
+  // KEYBOARD
+  // =========================
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -68,22 +75,52 @@ export default function LightboxGallery({
     return () => window.removeEventListener("keydown", onKey);
   }, [index, goTo, onClose]);
 
-  // wheel = UNA slide
+  // =========================
+  // WHEEL HANDLER (1 gesture = 1 slide)
+  // =========================
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
-    if (wheelLocked.current) return;
 
     const delta =
       Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 
-    if (Math.abs(delta) < 10) return;
+    if (Math.abs(delta) < 4) return;
+    if (wheelActive.current) return;
 
-    const dir: 1 | -1 = delta > 0 ? 1 : -1;
-    if (lastWheelDir.current === dir) return;
+    wheelAccum.current += delta;
 
-    lastWheelDir.current = dir;
-    goTo(index + dir);
+    const THRESHOLD = 120;
+
+    if (Math.abs(wheelAccum.current) >= THRESHOLD) {
+      const dir: 1 | -1 = wheelAccum.current > 0 ? 1 : -1;
+
+      wheelActive.current = true;
+      wheelAccum.current = 0;
+
+      goTo(index + dir);
+    }
   };
+
+  // =========================
+  // RESET WHEEL WHEN USER STOPS
+  // =========================
+  useEffect(() => {
+    let t: number | null = null;
+
+    const resetWheel = () => {
+      if (t) window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        wheelActive.current = false;
+        wheelAccum.current = 0;
+      }, 100);
+    };
+
+    window.addEventListener("wheel", resetWheel, { passive: true });
+    return () => {
+      if (t) window.clearTimeout(t);
+      window.removeEventListener("wheel", resetWheel);
+    };
+  }, []);
 
   if (!images.length) return null;
 
@@ -160,12 +197,20 @@ export default function LightboxGallery({
                 autoPlay
                 muted
                 playsInline
-                controls
                 preload="metadata"
-                style={{ maxWidth: "90vw", maxHeight: "80vh" }}
+                controls={!!videoReady[i]}
+                onLoadedMetadata={() =>
+                  setVideoReady((p) => ({ ...p, [i]: true }))
+                }
                 onError={() =>
                   setVideoError((p) => ({ ...p, [i]: true }))
                 }
+                style={{
+                  maxWidth: "90vw",
+                  maxHeight: "80vh",
+                  opacity: videoReady[i] ? 1 : 0,
+                  transition: "opacity 0.2s ease",
+                }}
               />
             ) : (
               <img
