@@ -27,7 +27,9 @@ export default function DirectorsList({ directors }: Props) {
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
 
+  // ref per scroll orizzontale e per scroll verticale
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   /* ================= AVATAR WOBBLE ================= */
   const rotation = useRef(0);
@@ -45,44 +47,52 @@ export default function DirectorsList({ directors }: Props) {
   const DRAG_THRESHOLD = 6;
 
   /* ================= HOVER DETECTION ================= */
-const [canHover, setCanHover] = useState(() => {
-  if (typeof window !== "undefined") {
-    return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
-  }
-  return false;
-});
+  const [canHover, setCanHover] = useState(() => {
+    if (typeof window !== "undefined") {
+      return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    }
+    return false;
+  });
 
-useEffect(() => {
-  const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-  const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
-  mq.addEventListener("change", handler);
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
 
-  return () => mq.removeEventListener("change", handler);
-}, []);
-
+  /* ================= CLICK DIRECTOR ================= */
   const handleClickDirector = (name: string) => {
-    // quando clicco un director, l'avatar hover scompare
     setHoverAvatar(null);
 
-    if (selectedDirector === name) {
-      setSelectedDirector(null);
-    } else {
-      setSelectedDirector(null);
-      setTimeout(() => {
-        setSelectedDirector(name);
+    const isSame = selectedDirector === name;
+    setSelectedDirector(isSame ? null : name);
+
+    // Delay per transizione max-height
+    setTimeout(() => {
+      if (!isSame) {
+        // scroll verticale al centro della viewport
+        const section = sectionRefs.current[name];
+        if (section) {
+          section.scrollIntoView({
+            behavior: "smooth",
+            block: "center",
+          });
+        }
+
+        // reset scroll orizzontale del contenitore creativo
         const scroller = scrollerRefs.current[name];
         if (scroller) scroller.scrollLeft = 0;
-      }, 400);
-    }
+      }
+    }, 350);
   };
 
+  /* ================= OPEN LIGHTBOX ================= */
   const openProjectGallery = (project: Project) => {
     const images: string[] = [];
-
     project.gallery?.forEach((img) => {
       if (img?.url) images.push(img.url);
     });
-
     if (!images.length) return;
 
     setLightbox({
@@ -96,28 +106,18 @@ useEffect(() => {
   /* ================= AVATAR SPRING ================= */
   useEffect(() => {
     let raf: number;
-
     const SPRING = 0.12;
     const DAMPING = 0.82;
     const MAX_ROTATION = 35;
 
     const animate = () => {
       const force = -rotation.current * SPRING;
-
       velocity.current += force;
       velocity.current *= DAMPING;
       rotation.current += velocity.current;
+      rotation.current = clamp(rotation.current, -MAX_ROTATION, MAX_ROTATION);
 
-      rotation.current = clamp(
-        rotation.current,
-        -MAX_ROTATION,
-        MAX_ROTATION
-      );
-
-      if (
-        rotation.current === MAX_ROTATION ||
-        rotation.current === -MAX_ROTATION
-      ) {
+      if (rotation.current === MAX_ROTATION || rotation.current === -MAX_ROTATION) {
         velocity.current *= 0.4;
       }
 
@@ -139,7 +139,12 @@ useEffect(() => {
           const isOpen = selectedDirector === director.name;
 
           return (
-            <div key={director.name}>
+          <div
+  key={director.name}
+  ref={(el) => {
+    sectionRefs.current[director.name] = el; // assegna ma non ritorna nulla
+  }}
+>
               <h2
                 className={`nameDirector ${isOpen ? "nameDirector--active" : ""}`}
                 style={{
@@ -152,8 +157,7 @@ useEffect(() => {
                 }}
                 onClick={() => handleClickDirector(director.name)}
                 onMouseEnter={(e) => {
-                  if (!canHover) return; // NO hover su mobile
-                  if (isOpen || !director.avatar?.url) return;
+                  if (!canHover || isOpen || !director.avatar?.url) return;
                   setHoverAvatar({
                     url: director.avatar.url,
                     x: e.clientX,
@@ -161,18 +165,14 @@ useEffect(() => {
                   });
                 }}
                 onMouseMove={(e) => {
-                  if (!canHover) return; // NO hover su mobile
-
+                  if (!canHover) return;
                   const now = performance.now();
-
                   if (lastMouse.current) {
                     const dx = e.clientX - lastMouse.current.x;
                     const dt = now - lastMouse.current.t;
                     if (dt > 0) velocity.current += (dx / dt) * 18;
                   }
-
                   lastMouse.current = { x: e.clientX, t: now };
-
                   setHoverAvatar((prev) =>
                     prev ? { ...prev, x: e.clientX, y: e.clientY } : null
                   );
@@ -196,15 +196,14 @@ useEffect(() => {
                 <div
                   className="creativeDiv"
                   ref={(el) => {
-                    scrollerRefs.current[director.name] = el;
-                  }}
+    scrollerRefs.current[director.name] = el; // solo assegnamento
+  }}
                   style={{
                     cursor: isDragging ? "grabbing" : "grab",
                   }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el) return;
-
                     dragStartX.current = e.clientX;
                     scrollStartX.current = el.scrollLeft;
                     dragDistance.current = 0;
@@ -213,10 +212,8 @@ useEffect(() => {
                   onMouseMove={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el || dragStartX.current === null) return;
-
                     const dx = e.clientX - dragStartX.current;
                     dragDistance.current = Math.abs(dx);
-
                     if (dragDistance.current > DRAG_THRESHOLD) {
                       setIsDragging(true);
                       el.scrollLeft = scrollStartX.current - dx;
@@ -266,7 +263,7 @@ useEffect(() => {
                           className="projectThumbnail"
                           src={project.thumbnail.url}
                           alt={project.title}
-                          loading="eager" // forza il caricamento immediato
+                          loading="eager"
                         />
                       )}
                       <div className="projectText">
