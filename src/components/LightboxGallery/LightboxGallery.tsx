@@ -66,7 +66,13 @@ export default function LightboxGallery({
       left: initialIndex * el.clientWidth,
       behavior: 'auto',
     });
-  }, [initialIndex]);
+
+    // preload immagini
+    images.forEach((src) => {
+      const img = new Image();
+      img.src = src;
+    });
+  }, [initialIndex, images]);
 
   /* -------------------------
    * UNLOCK after scroll
@@ -234,6 +240,44 @@ export default function LightboxGallery({
         ✕
       </button>
 
+      {/* AVANTI / INDIETRO */}
+      <button
+        onClick={() => goTo(index - 1)}
+        style={{
+          position: 'fixed',
+          left: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'rgba(0,0,0,0.4)',
+          color: 'white',
+          border: 'none',
+          fontSize: 28,
+          cursor: 'pointer',
+          padding: '8px 12px',
+          zIndex: 1001,
+        }}
+      >
+        ‹
+      </button>
+      <button
+        onClick={() => goTo(index + 1)}
+        style={{
+          position: 'fixed',
+          right: 16,
+          top: '50%',
+          transform: 'translateY(-50%)',
+          background: 'rgba(0,0,0,0.4)',
+          color: 'white',
+          border: 'none',
+          fontSize: 28,
+          cursor: 'pointer',
+          padding: '8px 12px',
+          zIndex: 1001,
+        }}
+      >
+        ›
+      </button>
+
       {/* CAROUSEL */}
       <div
         ref={scrollerRef}
@@ -244,14 +288,13 @@ export default function LightboxGallery({
           width: '100%',
           height: '100%',
           touchAction: 'pan-y',
-           overscrollBehaviorX: 'contain', // ← blocca back/forward
-    overscrollBehaviorY: 'contain', // blocca scroll rubato
+          overscrollBehaviorX: 'contain',
+          overscrollBehaviorY: 'contain',
         }}
         onClick={handleClick}
       >
         {images.map((src, i) => (
           <div
-            className='carousel-item'
             key={i}
             style={{
               flex: '0 0 100%',
@@ -272,7 +315,7 @@ export default function LightboxGallery({
                 pointerEvents: 'auto',
                 cursor: 'pointer',
               }}
-               loading="eager" // ← forza il caricamento immediato
+              loading="eager"
             />
           </div>
         ))}
