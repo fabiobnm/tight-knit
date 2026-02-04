@@ -25,21 +25,24 @@ export default function LightboxGallery({
   const [videoReady, setVideoReady] = useState<Record<number, boolean>>({});
 
   // =========================
-  // WHEEL LOCK
+  // SINGLE SOURCE OF TRUTH
   // =========================
-  const wheelAccum = useRef(0);
-  const wheelActive = useRef(false);
+  const isTransitioning = useRef(false);
 
   // =========================
-  // SWIPE LOCK
+  // WHEEL ACCUMULATOR
+  // =========================
+  const wheelAccum = useRef(0);
+
+  // =========================
+  // SWIPE STATE
   // =========================
   const pointerStartX = useRef<number | null>(null);
-  const swipeActive = useRef(false);
 
   // =========================
   // SCROLL ONLY
   // =========================
-  const scrollToIndex = useCallback((i: number, smooth = true) => {
+  const scrollToIndex = (i: number, smooth = true) => {
     const el = scrollerRef.current;
     if (!el) return;
 
@@ -47,18 +50,28 @@ export default function LightboxGallery({
       left: i * el.clientWidth,
       behavior: smooth ? "smooth" : "auto",
     });
-  }, []);
+  };
 
   // =========================
-  // CHANGE SLIDE
+  // GO TO SLIDE
   // =========================
   const goTo = useCallback(
     (i: number) => {
+      const el = scrollerRef.current;
+      if (!el) return;
+
       const clamped = Math.max(0, Math.min(images.length - 1, i));
+      if (clamped === index) return;
+
+      isTransitioning.current = true;
       setIndex(clamped);
-      scrollToIndex(clamped);
+
+      el.scrollTo({
+        left: clamped * el.clientWidth,
+        behavior: "smooth",
+      });
     },
-    [images.length, scrollToIndex]
+    [images.length, index]
   );
 
   // =========================
@@ -66,7 +79,41 @@ export default function LightboxGallery({
   // =========================
   useEffect(() => {
     scrollToIndex(initialIndex, false);
-  }, [initialIndex, scrollToIndex]);
+  }, [initialIndex]);
+
+  // =========================
+  // UNLOCK ON REAL SCROLL END
+  // =========================
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    let t: number | null = null;
+
+    const unlock = () => {
+      if (t) window.clearTimeout(t);
+      t = window.setTimeout(() => {
+        isTransitioning.current = false;
+        wheelAccum.current = 0;
+      }, 80);
+    };
+
+    el.addEventListener("scroll", unlock, { passive: true });
+
+    // scrollend (Chrome / Safari TP)
+    // @ts-ignore
+    el.addEventListener("scrollend", () => {
+      isTransitioning.current = false;
+      wheelAccum.current = 0;
+    });
+
+    return () => {
+      if (t) window.clearTimeout(t);
+      el.removeEventListener("scroll", unlock);
+      // @ts-ignore
+      el.removeEventListener("scrollend", unlock);
+    };
+  }, []);
 
   // =========================
   // KEYBOARD
@@ -86,12 +133,12 @@ export default function LightboxGallery({
   // =========================
   const handleWheel = (e: React.WheelEvent) => {
     e.preventDefault();
+    if (isTransitioning.current) return;
 
     const delta =
       Math.abs(e.deltaY) > Math.abs(e.deltaX) ? e.deltaY : e.deltaX;
 
     if (Math.abs(delta) < 4) return;
-    if (wheelActive.current) return;
 
     wheelAccum.current += delta;
 
@@ -99,50 +146,27 @@ export default function LightboxGallery({
 
     if (Math.abs(wheelAccum.current) >= THRESHOLD) {
       const dir: 1 | -1 = wheelAccum.current > 0 ? 1 : -1;
-      wheelActive.current = true;
       wheelAccum.current = 0;
       goTo(index + dir);
     }
   };
-
-  // reset wheel
-  useEffect(() => {
-    let t: number | null = null;
-
-    const resetWheel = () => {
-      if (t) window.clearTimeout(t);
-      t = window.setTimeout(() => {
-        wheelActive.current = false;
-        wheelAccum.current = 0;
-      }, 120);
-    };
-
-    window.addEventListener("wheel", resetWheel, { passive: true });
-    return () => {
-      if (t) window.clearTimeout(t);
-      window.removeEventListener("wheel", resetWheel);
-    };
-  }, []);
 
   // =========================
   // SWIPE HANDLERS
   // =========================
   const handlePointerDown = (e: React.PointerEvent) => {
     pointerStartX.current = e.clientX;
-    swipeActive.current = false;
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
     if (pointerStartX.current === null) return;
-    if (swipeActive.current) return;
+    if (isTransitioning.current) return;
 
     const deltaX = e.clientX - pointerStartX.current;
     const THRESHOLD = 60;
 
     if (Math.abs(deltaX) >= THRESHOLD) {
-      swipeActive.current = true;
       pointerStartX.current = null;
-
       const dir: 1 | -1 = deltaX < 0 ? 1 : -1;
       goTo(index + dir);
     }
@@ -150,7 +174,6 @@ export default function LightboxGallery({
 
   const endPointer = () => {
     pointerStartX.current = null;
-    swipeActive.current = false;
   };
 
   if (!images.length) return null;
