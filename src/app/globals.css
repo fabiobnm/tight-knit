@@ -197,6 +197,7 @@ a {
   overscroll-behavior-y: contain; /* evita scroll “rubato” */
 }
 
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
@@ -211,8 +212,8 @@ a {
   
 }
 .nameDirector{
-  font-size: 40px;
-  line-height: 2.5rem;
+  font-size: 37px;
+  line-height: 1.6rem;
 }
 
 .creativeDiv{

@@ -93,6 +93,14 @@ export default function Header() {
         </nav>
 
         {/* Toggle button */}
+        <div style={{
+           position: "fixed",
+            top: "53px",
+            height: "38px",
+            width: "100vw",
+            background: menuOpen ? "white" : "transparent",
+
+        }}>
         <button
           className="buttonHeaderMobile"
           onClick={() => setMenuOpen((v) => !v)}
@@ -100,7 +108,7 @@ export default function Header() {
             position: "fixed",
             top: "53px",
             height: "38px",
-            width: "100vw",
+            width: "min-content",
             textAlign: "left",
             left: 0,
             paddingLeft: "20px",
@@ -119,6 +127,8 @@ export default function Header() {
         >
           {menuOpen ? "−" : "+"}
         </button>
+        </div>
+        
 
         {/* Mobile nav */}
         {menuOpen && (
