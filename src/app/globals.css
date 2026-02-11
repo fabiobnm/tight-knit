@@ -225,6 +225,9 @@ a {
   font-size: 37px;
   line-height: 1.6rem;
 }
+.nameDirector:hover {
+    all: unset;
+  }
 
 .creativeDiv{
     margin-top: 15px;
