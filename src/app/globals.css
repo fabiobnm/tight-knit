@@ -189,6 +189,13 @@ a {
     gap: 16px;
     height: 55vH;
 }
+
+.questoDesktop{
+  display:block
+}
+.questoMobile{
+  display:none
+}
 .carousel-item{
    scroll-snap-align: start;
 }
@@ -207,8 +214,11 @@ a {
 
 @media (max-width: 600px) {
   .creativeAbout{
-    min-width: 80vW;
-    max-width: 80vW;
+    min-width: 100vW;
+    max-width: 100vW;
+    padding: 0 0px 37px 0px;
+    padding-inline: 30px;
+    text-align: center;
   
 }
 .nameDirector{
@@ -220,6 +230,12 @@ a {
     margin-top: 15px;
     padding-bottom: 15px;
 
+}
+.questoDesktop{
+  display:none
+}
+.questoMobile{
+  display:block
 }
 .projectThumbnail{
  /* max-width: 90vW;*/

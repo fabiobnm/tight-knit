@@ -286,7 +286,7 @@ export default function DirectorsList({ directors }: Props) {
 
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? "80vh" : "0px",
+                  maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
@@ -294,8 +294,10 @@ export default function DirectorsList({ directors }: Props) {
               >
                 <div
                   className="creativeDiv"
-                 
-                  style={{  height:'80vH', overflowY:'hidden',
+                  ref={(el) => {
+                     scrollerRefs.current[director.name] = el; // solo assegnamento
+                      }}
+                  style={{
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
@@ -331,16 +333,11 @@ export default function DirectorsList({ directors }: Props) {
                     <img
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
-                      style={{ width: "40%", marginInline:'auto' }}
+                      style={{ width: "40%" }}
                       alt=""
                     />
                     <div>
-                      <div
-            style={{
-            
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
+                      {director.info?.markdown}
                       <br />
                       <br />
                       To book {director.name.split(" ")[0]} please{" "}
@@ -352,9 +349,9 @@ export default function DirectorsList({ directors }: Props) {
 
                   {/* Projects */}
 
-               <div style={{display:'flex', gap:16, overflowX:'auto', paddingInline:'10px'}}>
+               <div style={{display:'flex', gap:16, overflowX:'auto'}}>
                   {director.projects?.map((project, index) => (
-                    <div 
+                    <div
                       key={`${project.title}-${index}`}
                       className="projectDiv"
                       onMouseUp={() => {
@@ -363,7 +360,7 @@ export default function DirectorsList({ directors }: Props) {
                       }}
                     >
                       {project.thumbnail?.url && (
-                        <img style={{maxHeight:'25vH'}}
+                        <img
                           className="projectThumbnail"
                           src={project.thumbnail.url}
                           alt={project.title}

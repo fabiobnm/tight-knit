@@ -185,7 +185,7 @@ export default function DirectorsList({ directors }: Props) {
                 {director.name}
               </h2>
 
-              <div className="questoDesktop"
+              <div
                 style={{
                   maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
@@ -197,7 +197,7 @@ export default function DirectorsList({ directors }: Props) {
                   className="creativeDiv"
                   ref={(el) => {
                      scrollerRefs.current[director.name] = el; // solo assegnamento
-                      }}
+                  }}
                   style={{
                     cursor: isDragging ? "grabbing" : "grab",
                   }}
@@ -238,13 +238,7 @@ export default function DirectorsList({ directors }: Props) {
                       alt=""
                     />
                     <div>
-
-        <div
-            style={{
-              
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
+                      {director.info?.markdown}
                       <br />
                       <br />
                       To book {director.name.split(" ")[0]} please{" "}
@@ -281,108 +275,6 @@ export default function DirectorsList({ directors }: Props) {
                   ))}
                 </div>
               </div>
-
-
-
-              <div className="questoMobile"
-                style={{
-                  maxHeight: isOpen ? "80vh" : "0px",
-                  overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
-                  marginTop: "6px",
-                }}
-              >
-                <div
-                  className="creativeDiv"
-                 
-                  style={{  height:'80vH', overflowY:'hidden',
-                    cursor: isDragging ? "grabbing" : "grab", display:'block'
-                  }}
-                  onMouseDown={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el) return;
-                    dragStartX.current = e.clientX;
-                    scrollStartX.current = el.scrollLeft;
-                    dragDistance.current = 0;
-                    setIsDragging(false);
-                  }}
-                  onMouseMove={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el || dragStartX.current === null) return;
-                    const dx = e.clientX - dragStartX.current;
-                    dragDistance.current = Math.abs(dx);
-                    if (dragDistance.current > DRAG_THRESHOLD) {
-                      setIsDragging(true);
-                      el.scrollLeft = scrollStartX.current - dx;
-                    }
-                  }}
-                  onMouseUp={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                  onMouseLeave={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                >
-                  {/* About */}
-                  <div className="creativeAbout">
-                    <div>About {director.name}</div>
-                    <img
-                      className={isOpen ? "avatarBobble" : ""}
-                      src={director.avatar?.url}
-                      style={{ width: "40%", marginInline:'auto' }}
-                      alt=""
-                    />
-                    <div>
-                      <div
-            style={{
-            
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
-                      <br />
-                      <br />
-                      To book {director.name.split(" ")[0]} please{" "}
-                      <a href="/contact" style={{ textDecoration: "underline" }}>
-                        contact us
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Projects */}
-
-               <div style={{display:'flex', gap:16, overflowX:'auto', paddingInline:'10px'}}>
-                  {director.projects?.map((project, index) => (
-                    <div 
-                      key={`${project.title}-${index}`}
-                      className="projectDiv"
-                      onMouseUp={() => {
-                        if (isDragging) return;
-                        openProjectGallery(project);
-                      }}
-                    >
-                      {project.thumbnail?.url && (
-                        <img style={{maxHeight:'25vH'}}
-                          className="projectThumbnail"
-                          src={project.thumbnail.url}
-                          alt={project.title}
-                          loading="eager"
-                        />
-                      )}
-                      <div className="projectText">
-                        {project.title}
-                        <br />
-                        {project.client}
-                      </div>
-                    </div>
-                  ))}
-
-                  </div>
-                </div>
-              </div>
-
-
             </div>
           );
         })}

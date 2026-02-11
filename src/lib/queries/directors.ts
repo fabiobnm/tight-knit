@@ -11,12 +11,15 @@ export type Project = {
   gallery?: ProjectImage[] | null;
 };
 
+export type DirectorInfo = {
+  markdown: string | null;
+  html: string | null;
+};
+
 export type Director = {
   name: string;
   avatar?: ProjectImage | null;
-  info?: {
-    markdown: string | null;
-  } | null;
+  info?: DirectorInfo | null;
   projects?: Project[] | null;
 };
 
@@ -28,9 +31,12 @@ export const DIRECTORS_PAGE_QUERY = /* GraphQL */ `
   query directors {
     directors {
       name
-      avatar{url}
+      avatar {
+        url
+      }
       info {
         markdown
+        html
       }
       projects(first: 100) {
         ... on Project {
