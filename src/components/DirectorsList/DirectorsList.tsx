@@ -286,7 +286,7 @@ export default function DirectorsList({ directors }: Props) {
 
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? "80vh" : "0px",
+                  maxHeight: isOpen ? "90vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
@@ -295,7 +295,7 @@ export default function DirectorsList({ directors }: Props) {
                 <div
                   className="creativeDiv"
                  
-                  style={{  height:'80vH', overflowY:'hidden',
+                  style={{  height:'90vH', overflowY:'hidden',
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
