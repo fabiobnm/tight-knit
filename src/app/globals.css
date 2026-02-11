@@ -125,9 +125,7 @@ div{
   line-height: 3.5rem;
 }
 
-.nameDirector:hover{
-  color: black;
-}
+
 .logoHomePage{
   width: 40vw;
     position: absolute;
@@ -210,7 +208,11 @@ a {
     color-scheme: dark;
   }
 }
-
+@media (min-width: 600px) {
+.nameDirector:hover{
+  color: black;
+}
+}
 
 @media (max-width: 600px) {
   .creativeAbout{
@@ -225,9 +227,6 @@ a {
   font-size: 37px;
   line-height: 1.6rem;
 }
-.nameDirector:hover {
-    all: unset;
-  }
 
 .creativeDiv{
     margin-top: 15px;
