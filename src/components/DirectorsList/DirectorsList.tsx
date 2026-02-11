@@ -234,7 +234,7 @@ export default function DirectorsList({ directors }: Props) {
                     <img
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
-                      style={{ width: "40%" }}
+                      style={{ width: "26%" }}
                       alt=""
                     />
                     <div>
@@ -331,7 +331,7 @@ export default function DirectorsList({ directors }: Props) {
                     <img
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
-                      style={{ width: "40%", marginInline:'auto' }}
+                      style={{ width: "26%", marginInline:'auto' }}
                       alt=""
                     />
                     <div>
