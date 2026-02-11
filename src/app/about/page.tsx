@@ -4,6 +4,10 @@ import { hygraph } from "@/lib/hygraph";
 import {ABOUT_PAGE_QUERY,type AboutPageQueryResult} from "@/lib/queries/about";
 import ReactMarkdown from "react-markdown";
 
+export const dynamic='force-static';
+export const revalidate= 0;
+
+
 
 async function getAbout(): Promise<AboutPageQueryResult["abouts"][number] | null> {
   const data = await hygraph.request<AboutPageQueryResult>(ABOUT_PAGE_QUERY);

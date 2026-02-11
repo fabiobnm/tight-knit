@@ -2,6 +2,10 @@ import Header from "@/components/Header/Header";
 import { hygraph } from "@/lib/hygraph";
 import {CONTACT_PAGE_QUERY,type ContactPageQueryResult} from "@/lib/queries/contact";
 
+export const dynamic='force-static';
+export const revalidate= 0;
+
+
 
 async function getContact(): Promise<ContactPageQueryResult["contacts"][number] | null> {
   const data = await hygraph.request<ContactPageQueryResult>(CONTACT_PAGE_QUERY);
