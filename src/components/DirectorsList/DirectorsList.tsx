@@ -76,7 +76,7 @@ export default function DirectorsList({ directors }: Props) {
         if (section) {
           section.scrollIntoView({
             behavior: "smooth",
-            block: "center",
+            block: "end",
           });
         }
 
