@@ -180,7 +180,7 @@ a {
 }
 
 .creativeAbout{
-    min-width: 25vW;
+    min-width: 320px;
     max-width: 25vW;
     position: relative;
     display: flex;
@@ -211,6 +211,10 @@ a {
   overscroll-behavior-y: contain; /* evita scroll “rubato” */
 }
 
+.noDesktop{
+  display: none;
+}
+
 
 @media (prefers-color-scheme: dark) {
   html {
@@ -232,6 +236,11 @@ a {
     text-align: center;
   
 }
+
+.noDesktop{
+  display: block;
+}
+
 .nameDirector{
   font-size: 37px;
   line-height: 1.6rem;

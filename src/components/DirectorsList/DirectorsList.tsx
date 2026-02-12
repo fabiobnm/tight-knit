@@ -190,7 +190,7 @@ export default function DirectorsList({ directors }: Props) {
                 style={{
                   maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
+                  transition: "max-height .6s ease-in-out",
                   marginTop: "6px",
                 }}
               >

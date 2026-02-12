@@ -93,7 +93,7 @@ export default function Header() {
         </nav>
 
         {/* Toggle button */}
-        <div style={{
+        <div className="noDesktop" style={{
            position: "fixed",
             top: "53px",
             height: "38px",
