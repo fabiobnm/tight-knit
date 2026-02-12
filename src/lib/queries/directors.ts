@@ -29,7 +29,7 @@ export type DirectorsPageQueryResult = {
 
 export const DIRECTORS_PAGE_QUERY = /* GraphQL */ `
   query directors {
-    directors {
+    directors(first: 100) {
       name
       avatar {
         url
@@ -45,7 +45,7 @@ export const DIRECTORS_PAGE_QUERY = /* GraphQL */ `
           thumbnail {
             url
           }
-          gallery {
+          gallery (first: 100){
             url
           }
         }

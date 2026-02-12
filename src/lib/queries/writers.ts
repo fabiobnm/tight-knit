@@ -19,7 +19,7 @@ export type WritersPageQueryResult = {
 
 export const WRITERS_PAGE_QUERY = /* GraphQL */ `
  query writers {
-    writers{
+    writers(first: 100){
       name
       bio{
         html
