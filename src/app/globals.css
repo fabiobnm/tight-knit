@@ -9,6 +9,15 @@
     --foreground: black;
   }
 }
+::selection{
+  background-color: black;
+  color:white
+}
+
+::selection:hover{
+  background-color: black;
+  color:red
+}
 
 @font-face {
   font-family: 'ALTGumbo-semi';
@@ -122,7 +131,7 @@ div{
   font-family:'ALTGumbo-semi', Arial, Helvetica, sans-serif ;
   color: white;
   -webkit-text-stroke: 1px black;
-  line-height: 3.5rem;
+  line-height: .70
 }
 
 
