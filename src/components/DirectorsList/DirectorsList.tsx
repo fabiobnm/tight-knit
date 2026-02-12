@@ -69,7 +69,7 @@ export default function DirectorsList({ directors }: Props) {
     setSelectedDirector(isSame ? null : name);
 
     // Delay per transizione max-height
-    setTimeout(() => {
+{ /*   setTimeout(() => {
       if (!isSame) {
         // scroll verticale al centro della viewport
         const section = sectionRefs.current[name];
@@ -85,6 +85,7 @@ export default function DirectorsList({ directors }: Props) {
         if (scroller) scroller.scrollLeft = 0;
       }
     }, 350);
+    */}
   };
 
   /* ================= OPEN LIGHTBOX ================= */
