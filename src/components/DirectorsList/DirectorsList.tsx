@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import type { Director, Project } from "@/lib/queries/directors";
 import LightboxGallery from "@/components/LightboxGallery/LightboxGallery";
+import { log, time } from "node:console";
+import { setTimeout } from "node:timers/promises";
 
 type Props = {
   directors: Director[];
@@ -62,11 +64,45 @@ export default function DirectorsList({ directors }: Props) {
   }, []);
 
   /* ================= CLICK DIRECTOR ================= */
-  const handleClickDirector = (name: string) => {
+  const handleClickDirector = (name: string, index: number) => {
     setHoverAvatar(null);
 
+  const isMobile = window.innerWidth <= 768; // breakpoint per iPhone / mobile
+  const scrollMultiplier = isMobile ? 31 : 62;
+
+ const targetScroll = index * scrollMultiplier;
+
+  const duration = 500; // durata in ms (più grande = più lento)
+  const startScroll = window.scrollY;
+  const distance = targetScroll - startScroll;
+  let startTime: number | null = null;
+
+  function scrollStep(timestamp: number) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1); // 0 → 1
+    window.scrollTo(0, startScroll + distance * easeInOutQuad(progress));
+    if (progress < 1) {
+      window.requestAnimationFrame(scrollStep);
+    }
+  }
+
+  function easeInOutQuad(t: number) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  window.setTimeout(() => {
+    window.requestAnimationFrame(scrollStep);
+  }, 350);
+
+  console.log('ciao ' + targetScroll);
+  
     const isSame = selectedDirector === name;
     setSelectedDirector(isSame ? null : name);
+
+     // scroll verticale
+
+
+
 
     // Delay per transizione max-height
 { /*   setTimeout(() => {
@@ -136,7 +172,7 @@ export default function DirectorsList({ directors }: Props) {
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {directors.map((director) => {
+        {directors.map((director, i) => {
           const isOpen = selectedDirector === director.name;
 
           return (
@@ -156,7 +192,7 @@ export default function DirectorsList({ directors }: Props) {
                   marginInline: "auto",
                   width: "fit-content",
                 }}
-                onClick={() => handleClickDirector(director.name)}
+                onClick={() => handleClickDirector(director.name, i)}
                 onMouseEnter={(e) => {
                   if (!canHover || isOpen || !director.avatar?.url) return;
                   setHoverAvatar({
@@ -287,7 +323,7 @@ export default function DirectorsList({ directors }: Props) {
 
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? "90vh" : "0px",
+                  maxHeight: isOpen ? "80vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
@@ -296,7 +332,7 @@ export default function DirectorsList({ directors }: Props) {
                 <div
                   className="creativeDiv"
                  
-                  style={{  height:'90vH', overflowY:'hidden',
+                  style={{  height:'80vH', overflowY:'hidden',
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
