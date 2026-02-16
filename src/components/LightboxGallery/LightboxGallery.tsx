@@ -60,6 +60,33 @@ export default function LightboxGallery({
     return () => el.removeEventListener('scroll', onScroll);
   }, [viewportWidth]);
 
+
+// controlli tastiera
+useEffect(() => {
+  const handleKey = (e: KeyboardEvent) => {
+    if (e.key === 'Escape') {
+      onClose();
+      return;
+    }
+
+    const el = scrollerRef.current;
+    if (!el) return;
+
+    if (e.key === 'ArrowRight') {
+      el.scrollBy({ left: viewportWidth, behavior: 'smooth' });
+    }
+
+    if (e.key === 'ArrowLeft') {
+      el.scrollBy({ left: -viewportWidth, behavior: 'smooth' });
+    }
+  };
+
+  window.addEventListener('keydown', handleKey);
+  return () => window.removeEventListener('keydown', handleKey);
+}, [onClose, viewportWidth]);
+
+
+
   // Pulsanti avanti/indietro
   const goNext = () => {
     const el = scrollerRef.current;

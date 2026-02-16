@@ -15,7 +15,7 @@ export default function Header() {
   const navItems = [
     { href: "/creatives", label: "CREATIVES" },
     { href: "/writers", label: "WRITERS" },
-    { href: "/AI", label: "AI" },
+   
     { href: "/about", label: "ABOUT" },
     { href: "/contact", label: "CONTACT" },
   ];
