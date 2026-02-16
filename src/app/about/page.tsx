@@ -21,7 +21,7 @@ export default async function AboutPage() {
   return (
     <div>
       <Header />
-      <main style={{ marginTop: "50vH",transform:'translateY(-50%)', padding: "0 20px" }}>
+      <main className="opacityAnim" style={{ marginTop: "50vH",transform:'translateY(-50%)', padding: "0 20px" }}>
           <div className="textAbout">
          <p className="contactTitle"> ABOUT US</p> <br />
           

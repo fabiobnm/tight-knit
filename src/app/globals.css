@@ -133,6 +133,18 @@ div{
   line-height: .70
 }
 
+.opacityAnim{
+  animation: opacAnim;
+  animation-duration: .2s;
+}
+
+@keyframes opacAnim {
+  from {opacity: 0}
+  to {opacity: 1}
+}
+
+
+
 
 .logoHomePage{
   width: 40vw;
@@ -236,6 +248,23 @@ a {
     color-scheme: dark;
   }
 }
+
+
+@media only screen 
+and (min-device-width : 768px) 
+and (max-device-width : 1024px) 
+and (orientation : portrait) {
+
+.creativeDiv{
+  height: 40vH;
+}
+  
+
+}
+
+
+
+
 @media (min-width: 600px) {
 .nameDirector:hover{
   color: black;
