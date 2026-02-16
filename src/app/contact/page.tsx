@@ -21,7 +21,7 @@ export default async function Contact() {
   return (
     <div >
         <Header />
-      <main style={{ marginTop: "50vH",transform:'translateY(-50%)',marginInline:'auto', padding: "0 20px", textAlign:'center', width:'60vW' }}>
+      <main className="textContact">
         <p style={{marginBottom:'50px'}}>CONTACTS</p>
 
 

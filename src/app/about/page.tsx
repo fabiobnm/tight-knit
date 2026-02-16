@@ -22,14 +22,7 @@ export default async function AboutPage() {
     <div>
       <Header />
       <main style={{ marginTop: "50vH",transform:'translateY(-50%)', padding: "0 20px" }}>
-          <div
-            style={{
-              maxWidth: "50vW",
-              lineHeight: 1.3,
-              margin:'auto',
-              textAlign:'center'
-            }}
-          >
+          <div className="textAbout">
          <p className="contactTitle"> ABOUT US</p> <br />
           
           <div dangerouslySetInnerHTML={{ __html: about?.aboutUs?.html ?? "Nessun contenuto AboutUs trovato." }}/>
