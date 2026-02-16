@@ -154,7 +154,8 @@ div{
 }
 .projectThumbnail{
     object-fit: cover;
-    height: -webkit-fill-available;
+   /* height: -webkit-fill-available;*/
+   height: 94%;
     margin-bottom: 12px;
     display: block;
     user-select: none;
