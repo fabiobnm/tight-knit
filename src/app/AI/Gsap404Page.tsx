@@ -11,11 +11,17 @@ import type { AIImage } from '@/lib/queries/AI';
 
 type Props = {
   images: AIImage[];
+  text?: {
+    html: string;
+  } | null;
 };
 
-export default function Gsap404Page({ images }: Props) {
+export default function Gsap404Page({ images, text }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const safeImages = images ?? [];
+
+    // 🔥 log per debug
+  console.log("text prop:", text);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger, Observer);
@@ -87,12 +93,24 @@ export default function Gsap404Page({ images }: Props) {
     <div>
       <Header />
 
+      <div
+  style={{
+    position: 'fixed',
+    top: '50vh',
+    left: '50vw',
+    transform: 'translate(-50%, -50%)',
+    textAlign: 'center',
+    zIndex: 20,
+    pointerEvents: 'none',
+  }}
+    dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
+/>
+
       <div ref={rootRef} className="container" >
         <nav className="navvino" />
 
         <section className="wrapper-404">
-          <h1 className="AText">AI Projects</h1>
-
+        
           {safeImages.map((img, index) => (
             <div
               key={index}

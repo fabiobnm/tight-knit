@@ -214,8 +214,9 @@ useEffect(() => {
               alt=""
               draggable={false}
               style={{
-                width: '96%',
-                maxHeight:'100vH',
+                width: 'auto',
+                minWidth: '90vw', 
+                maxHeight: '96vH',
                 objectFit: 'contain',
                 userSelect: 'none',
                 pointerEvents: 'auto',

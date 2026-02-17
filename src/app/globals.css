@@ -108,6 +108,7 @@ div{
   font-size: 11px;
 }
 
+
 .servicesText{
   white-space: pre-line;
   line-height: 2;
@@ -241,6 +242,7 @@ a {
     text-align: center;
     width: 60vW;
 }
+
 
 
 @media (prefers-color-scheme: dark) {

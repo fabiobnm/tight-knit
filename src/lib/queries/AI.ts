@@ -11,6 +11,9 @@ export type AIImage = {
 
 export type AI = {
   id: string;
+  text: {
+  html: string;
+} | null;
   images: AIImage[]; // viene da images { ... }
 };
 
@@ -22,6 +25,7 @@ export const AI_PAGE_QUERY = /* GraphQL */ `
   query Ai {
     ais {
       id
+      text{ html }
       images (first:100) {
         image {
           url
