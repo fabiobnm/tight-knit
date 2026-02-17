@@ -242,6 +242,15 @@ a {
     text-align: center;
     width: 60vW;
 }
+.lightboxImage{
+  width: auto;
+  max-width: 98vW;
+    max-height: 96vh;
+    object-fit: contain;
+    user-select: none;
+    pointer-events: auto;
+    cursor: pointer;
+}
 
 
 
@@ -286,6 +295,10 @@ and (orientation : portrait) {
 .noDesktop{
   display: block;
 }
+.lightboxImage{
+  width: 98%;
+}
+
 
 .nameDirector{
   font-size: 35px;

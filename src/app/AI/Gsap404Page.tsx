@@ -100,7 +100,7 @@ export default function Gsap404Page({ images, text }: Props) {
     left: '50vw',
     transform: 'translate(-50%, -50%)',
     textAlign: 'center',
-    zIndex: 20,
+    zIndex: 0,
     pointerEvents: 'none',
   }}
     dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}

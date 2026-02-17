@@ -213,15 +213,7 @@ useEffect(() => {
               src={src}
               alt=""
               draggable={false}
-              style={{
-                width: 'auto',
-                minWidth: '90vw', 
-                maxHeight: '96vH',
-                objectFit: 'contain',
-                userSelect: 'none',
-                pointerEvents: 'auto',
-                cursor: 'pointer',
-              }}
+              className='lightboxImage'
               loading="eager"
               
             />
