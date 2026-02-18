@@ -1,19 +1,11 @@
-"use client";
+'use client';
 
 import { useState, useRef, useEffect } from "react";
 import type { Director, Project } from "@/lib/queries/directors";
-import LightboxGallery from "@/components/LightboxGallery/LightboxGallery";
 
 type Props = {
   directors: Director[];
 };
-
-type LightboxState = {
-  images: string[];
-  initialIndex: number;
-  title: string;
-  client: string;
-} | null;
 
 type HoverAvatar = {
   url: string;
@@ -23,30 +15,16 @@ type HoverAvatar = {
 
 export default function DirectorsList({ directors }: Props) {
   const [selectedDirector, setSelectedDirector] = useState<string | null>(null);
-  const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [iframeUrl, setIframeUrl] = useState<string | null>(null);
 
-  // ref per scroll orizzontale e per scroll verticale
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
-
-  /* ================= AVATAR WOBBLE ================= */
-  const rotation = useRef(0);
-  const velocity = useRef(0);
-  const avatarEl = useRef<HTMLImageElement | null>(null);
-  const lastMouse = useRef<{ x: number; t: number } | null>(null);
 
   const clamp = (v: number, min: number, max: number) =>
     Math.max(min, Math.min(max, v));
 
-  /* ================= DRAG SCROLL ================= */
-  const dragStartX = useRef<number | null>(null);
-  const scrollStartX = useRef(0);
-  const dragDistance = useRef(0);
-  const DRAG_THRESHOLD = 6;
-
-  /* ================= HOVER DETECTION ================= */
   const [canHover, setCanHover] = useState(() => {
     if (typeof window !== "undefined") {
       return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
@@ -61,90 +39,54 @@ export default function DirectorsList({ directors }: Props) {
     return () => mq.removeEventListener("change", handler);
   }, []);
 
-  /* ================= CLICK DIRECTOR ================= */
-  const handleClickDirector = (name: string) => {
-    setHoverAvatar(null);
+  const handleClickDirector = (name: string, index: number) => {
+    setSelectedDirector((prev) => (prev === name ? null : name));
 
-    const isSame = selectedDirector === name;
-    setSelectedDirector(isSame ? null : name);
+    // scroll verticale con easing
+    const isMobile = window.innerWidth <= 768;
+    const scrollMultiplier = isMobile ? 31 : 62;
+    const targetScroll = index * scrollMultiplier;
 
-    // Delay per transizione max-height
-    setTimeout(() => {
-      if (!isSame) {
-        // scroll verticale al centro della viewport
-        const section = sectionRefs.current[name];
-        if (section) {
-          section.scrollIntoView({
-            behavior: "smooth",
-            block: "center",
-          });
-        }
+    const duration = 500;
+    const startScroll = window.scrollY;
+    const distance = targetScroll - startScroll;
+    let startTime: number | null = null;
 
-        // reset scroll orizzontale del contenitore creativo
-        const scroller = scrollerRefs.current[name];
-        if (scroller) scroller.scrollLeft = 0;
+    function scrollStep(timestamp: number) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      window.scrollTo(0, startScroll + distance * easeInOutQuad(progress));
+      if (progress < 1) {
+        window.requestAnimationFrame(scrollStep);
       }
+    }
+
+    function easeInOutQuad(t: number) {
+      return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+    }
+
+    setTimeout(() => {
+      window.requestAnimationFrame(scrollStep);
     }, 350);
   };
 
-  /* ================= OPEN LIGHTBOX ================= */
-  const openProjectGallery = (project: Project) => {
-    const images: string[] = [];
-    project.gallery?.forEach((img) => {
-      if (img?.url) images.push(img.url);
-    });
-    if (!images.length) return;
-
-    setLightbox({
-      images,
-      initialIndex: 0,
-      title: project.title,
-      client: project.client,
-    });
+  const handleProjectClick = (project: Project) => {
+    if (project.linkGallery) {
+      setIframeUrl(project.linkGallery);
+    }
   };
-
-  /* ================= AVATAR SPRING ================= */
-  useEffect(() => {
-    let raf: number;
-    const SPRING = 0.12;
-    const DAMPING = 0.82;
-    const MAX_ROTATION = 35;
-
-    const animate = () => {
-      const force = -rotation.current * SPRING;
-      velocity.current += force;
-      velocity.current *= DAMPING;
-      rotation.current += velocity.current;
-      rotation.current = clamp(rotation.current, -MAX_ROTATION, MAX_ROTATION);
-
-      if (rotation.current === MAX_ROTATION || rotation.current === -MAX_ROTATION) {
-        velocity.current *= 0.4;
-      }
-
-      if (avatarEl.current) {
-        avatarEl.current.style.transform = `rotate(${rotation.current}deg)`;
-      }
-
-      raf = requestAnimationFrame(animate);
-    };
-
-    animate();
-    return () => cancelAnimationFrame(raf);
-  }, []);
 
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {directors.map((director) => {
+        {directors.map((director, i) => {
           const isOpen = selectedDirector === director.name;
 
           return (
-          <div
-  key={director.name}
-  ref={(el) => {
-    sectionRefs.current[director.name] = el; // assegna ma non ritorna nulla
-  }}
->
+            <div
+              key={director.name}
+              ref={(el) => {(sectionRefs.current[director.name] = el)}}
+            >
               <h2
                 className={`nameDirector ${isOpen ? "nameDirector--active" : ""}`}
                 style={{
@@ -155,121 +97,48 @@ export default function DirectorsList({ directors }: Props) {
                   marginInline: "auto",
                   width: "fit-content",
                 }}
-                onClick={() => handleClickDirector(director.name)}
+                onClick={() => handleClickDirector(director.name, i)}
                 onMouseEnter={(e) => {
                   if (!canHover || isOpen || !director.avatar?.url) return;
-                  setHoverAvatar({
-                    url: director.avatar.url,
-                    x: e.clientX,
-                    y: e.clientY,
-                  });
+                  setHoverAvatar({ url: director.avatar.url, x: e.clientX, y: e.clientY });
                 }}
                 onMouseMove={(e) => {
                   if (!canHover) return;
-                  const now = performance.now();
-                  if (lastMouse.current) {
-                    const dx = e.clientX - lastMouse.current.x;
-                    const dt = now - lastMouse.current.t;
-                    if (dt > 0) velocity.current += (dx / dt) * 18;
-                  }
-                  lastMouse.current = { x: e.clientX, t: now };
                   setHoverAvatar((prev) =>
                     prev ? { ...prev, x: e.clientX, y: e.clientY } : null
                   );
                 }}
-                onMouseLeave={() => {
-                  lastMouse.current = null;
-                  setHoverAvatar(null);
-                }}
+                onMouseLeave={() => setHoverAvatar(null)}
               >
                 {director.name}
               </h2>
 
-              <div className="questoDesktop"
+              <div
+                className="questoDesktop"
                 style={{
                   maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
+                  transition: "max-height .6s ease-in-out",
                   marginTop: "6px",
                 }}
               >
                 <div
                   className="creativeDiv"
-                  ref={(el) => {
-                     scrollerRefs.current[director.name] = el; // solo assegnamento
-                      }}
-                  style={{
-                    cursor: isDragging ? "grabbing" : "grab",
-                  }}
-                  onMouseDown={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el) return;
-                    dragStartX.current = e.clientX;
-                    scrollStartX.current = el.scrollLeft;
-                    dragDistance.current = 0;
-                    setIsDragging(false);
-                  }}
-                  onMouseMove={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el || dragStartX.current === null) return;
-                    const dx = e.clientX - dragStartX.current;
-                    dragDistance.current = Math.abs(dx);
-                    if (dragDistance.current > DRAG_THRESHOLD) {
-                      setIsDragging(true);
-                      el.scrollLeft = scrollStartX.current - dx;
-                    }
-                  }}
-                  onMouseUp={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                  onMouseLeave={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
+                  ref={(el) => {(scrollerRefs.current[director.name] = el)}}
+                  style={{ cursor: isDragging ? "grabbing" : "grab" }}
                 >
-                  {/* About */}
-                  <div className="creativeAbout">
-                    <div>About {director.name}</div>
-                    <img
-                      className={isOpen ? "avatarBobble" : ""}
-                      src={director.avatar?.url}
-                      style={{ width: "40%" }}
-                      alt=""
-                    />
-                    <div>
-
-        <div
-            style={{
-              
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
-                      <br />
-                      <br />
-                      To book {director.name.split(" ")[0]} please{" "}
-                      <a href="/contact" style={{ textDecoration: "underline" }}>
-                        contact us
-                      </a>
-                    </div>
-                  </div>
-
                   {/* Projects */}
                   {director.projects?.map((project, index) => (
                     <div
                       key={`${project.title}-${index}`}
                       className="projectDiv"
-                      onMouseUp={() => {
-                        if (isDragging) return;
-                        openProjectGallery(project);
-                      }}
+                      onMouseUp={() => handleProjectClick(project)}
                     >
                       {project.thumbnail?.url && (
                         <img
                           className="projectThumbnail"
                           src={project.thumbnail.url}
                           alt={project.title}
-                          loading="eager"
                         />
                       )}
                       <div className="projectText">
@@ -281,105 +150,6 @@ export default function DirectorsList({ directors }: Props) {
                   ))}
                 </div>
               </div>
-
-
-
-              <div className="questoMobile"
-                style={{
-                  maxHeight: isOpen ? "60vh" : "0px",
-                  overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
-                  marginTop: "6px",
-                }}
-              >
-                <div
-                  className="creativeDiv"
-                  ref={(el) => {
-                     scrollerRefs.current[director.name] = el; // solo assegnamento
-                      }}
-                  style={{
-                    cursor: isDragging ? "grabbing" : "grab", display:'block'
-                  }}
-                  onMouseDown={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el) return;
-                    dragStartX.current = e.clientX;
-                    scrollStartX.current = el.scrollLeft;
-                    dragDistance.current = 0;
-                    setIsDragging(false);
-                  }}
-                  onMouseMove={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el || dragStartX.current === null) return;
-                    const dx = e.clientX - dragStartX.current;
-                    dragDistance.current = Math.abs(dx);
-                    if (dragDistance.current > DRAG_THRESHOLD) {
-                      setIsDragging(true);
-                      el.scrollLeft = scrollStartX.current - dx;
-                    }
-                  }}
-                  onMouseUp={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                  onMouseLeave={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                >
-                  {/* About */}
-                  <div className="creativeAbout">
-                    <div>About {director.name}</div>
-                    <img
-                      className={isOpen ? "avatarBobble" : ""}
-                      src={director.avatar?.url}
-                      style={{ width: "40%" }}
-                      alt=""
-                    />
-                    <div>
-                      {director.info?.markdown}
-                      <br />
-                      <br />
-                      To book {director.name.split(" ")[0]} please{" "}
-                      <a href="/contact" style={{ textDecoration: "underline" }}>
-                        contact us
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Projects */}
-
-               <div style={{display:'flex', gap:16, overflowX:'auto'}}>
-                  {director.projects?.map((project, index) => (
-                    <div
-                      key={`${project.title}-${index}`}
-                      className="projectDiv"
-                      onMouseUp={() => {
-                        if (isDragging) return;
-                        openProjectGallery(project);
-                      }}
-                    >
-                      {project.thumbnail?.url && (
-                        <img
-                          className="projectThumbnail"
-                          src={project.thumbnail.url}
-                          alt={project.title}
-                          loading="eager"
-                        />
-                      )}
-                      <div className="projectText">
-                        {project.title}
-                        <br />
-                        {project.client}
-                      </div>
-                    </div>
-                  ))}
-
-                  </div>
-                </div>
-              </div>
-
-
             </div>
           );
         })}
@@ -388,7 +158,6 @@ export default function DirectorsList({ directors }: Props) {
       {/* Avatar hover */}
       {canHover && hoverAvatar && (
         <img
-          ref={avatarEl}
           src={hoverAvatar.url}
           alt=""
           style={{
@@ -403,15 +172,29 @@ export default function DirectorsList({ directors }: Props) {
         />
       )}
 
-      {/* Lightbox */}
-      {lightbox && (
-        <LightboxGallery
-          images={lightbox.images}
-          initialIndex={lightbox.initialIndex}
-          onClose={() => setLightbox(null)}
-          title={lightbox.title}
-          client={lightbox.client}
-        />
+      {/* Iframe overlay */}
+      {iframeUrl && (
+        <div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100vw",
+            height: "100vh",
+            background: "rgba(0,0,0,0.8)",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            zIndex: 999,
+          }}
+          onClick={() => setIframeUrl(null)}
+        >
+          <iframe
+            src={iframeUrl}
+            style={{ width: "80%", height: "80%", border: "none", borderRadius: 8 }}
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
       )}
     </>
   );

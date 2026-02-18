@@ -51,7 +51,7 @@ export default function Header() {
           width: "100vw",
           zIndex: 99,
           alignItems: "center",
-          background: menuOpen ? "white" : "transparent",
+          background: menuOpen ? "white" : "linear-gradient(180deg,rgba(255, 255, 255, 1) 25%, rgba(255, 255, 255, 0.83) 47%, rgba(255, 255, 255, 0) 87%)",
         }}
       >
         {/* Logo */}

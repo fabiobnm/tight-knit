@@ -251,6 +251,9 @@ a {
     pointer-events: auto;
     cursor: pointer;
 }
+.vi3c6W_flex, .opacity-9, .reader-view-footer-container{
+  display: none;
+}
 
 
 

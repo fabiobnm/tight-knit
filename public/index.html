@@ -359,7 +359,7 @@
       
       <div class="logo-block" style='display:flex; padding:20px;padding-bottom:5px; position:fixed; top:0;left:0;width:100vW;z-index:99' >
       
-        <Link href="/">
+        <a href="/">
           <img
           src="/Logo.svg"
           alt="Next.js logo"
@@ -367,25 +367,25 @@
          
           priority
         />
-        </Link>
+        </a>
 
 
         <nav class="menuVoices">
-          <a href="/creatives" className="hover:underline">
+          <a href="/creatives" class="hover:underline">
             CREATIVES
           </a>
-           <a href="/writers" className="hover:underline">
+           <a href="/writers" class="hover:underline">
             WRITERS
           </a>
           <!--  
-           <a href="/AI" className="hover:underline">
+           <a href="/AI" class="hover:underline">
             AI
           </a>
           -->
-          <a href="/about" className="hover:underline">
+          <a href="/about" class="hover:underline">
             ABOUT
           </a>
-          <a href="/contact" className="hover:underline">
+          <a href="/contact" class="hover:underline">
             CONTACT
           </a>
         </nav>
@@ -418,21 +418,15 @@
         <!-- LIST -->
         <div id="servicesWrapper" class="services-wrapper">
           <ul id="servicesList" class="services-list">
-            <li><span class="li-inner">VISUAL RESEARCH</span></li>
-            <li><span class="li-inner">WRITING</span></li>
-            <li><span class="li-inner">TREATMENT DESIGN</span></li>
-            <li><span class="li-inner">AI CONCEPTS</span></li>
-            <li><span class="li-inner">MOOD FILMS</span></li>
+           
           </ul>
         </div>
 
         <!-- FINAL COPY -->
         <p id="finalCopy" class="final-copy">
-          A vastly experienced team of creative visual researchers, designers, writers and editors boasting a diverse
-          range of creative knowledge and skill. Ever-evolving and adaptable our TightKnit Team will be ready to pick up
-          your project at any stage of development and polish it to perfection. Utilising cutting-edge industry tools to
-          make sure your pitch delivers your vision and cuts through the noise to win you the job.
+       <button>creatives</button>
         </p>
+       
       </div>
     </main>
   </div>
@@ -440,7 +434,65 @@
   <!-- GSAP (for the list effect) -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
 
+
   <script>
+const HYGRAPH_ENDPOINT =
+"https://eu-west-2.cdn.hygraph.com/content/cmls6u17806ej07mo7oqp59ah/master";
+
+const QUERY = `
+query {
+  homePages(first: 1) {
+    services
+    text {
+      html
+    }
+  }
+}
+`;
+
+async function loadContent() {
+  try {
+    const res = await fetch(HYGRAPH_ENDPOINT, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ query: QUERY })
+    });
+
+    const json = await res.json();
+    const page = json.data.homePages[0];
+
+    // ✅ FINAL TEXT
+    if (page.text?.html) {
+      document.getElementById("finalCopy").innerHTML = page.text.html;
+    }
+
+    // ✅ SERVICES LIST (se vuoi gestirla da CMS)
+    if (page.services) {
+      const list = document.getElementById("servicesList");
+      list.innerHTML = "";
+
+      page.services.forEach(service => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="li-inner">${service}</span>`;
+        list.appendChild(li);
+      });
+    }
+
+  } catch (err) {
+    console.error("Hygraph error:", err);
+  }
+}
+
+loadContent();
+</script>
+
+
+
+
+  <script>
+
+
+
 
 
     setTimeout(() => {

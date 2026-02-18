@@ -2,6 +2,8 @@
 
 export type ProjectImage = {
   url: string;
+    mimeType?: string | null; // aggiungi questa riga
+
 };
 
 export type Project = {
@@ -9,6 +11,7 @@ export type Project = {
   client: string;
   thumbnail: ProjectImage | null;
   gallery?: ProjectImage[] | null;
+  linkGallery?: string | null; 
 };
 
 export type DirectorInfo = {
@@ -44,9 +47,12 @@ export const DIRECTORS_PAGE_QUERY = /* GraphQL */ `
           client
           thumbnail {
             url
+            mimeType
           }
+          linkGallery
           gallery (first: 100){
             url
+            mimeType
           }
         }
       }

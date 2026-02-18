@@ -3,6 +3,8 @@
 import { useState, useRef, useEffect } from "react";
 import type { Director, Project } from "@/lib/queries/directors";
 import LightboxGallery from "@/components/LightboxGallery/LightboxGallery";
+import { log, time } from "node:console";
+import { setTimeout } from "node:timers/promises";
 
 type Props = {
   directors: Director[];
@@ -62,21 +64,55 @@ export default function DirectorsList({ directors }: Props) {
   }, []);
 
   /* ================= CLICK DIRECTOR ================= */
-  const handleClickDirector = (name: string) => {
+  const handleClickDirector = (name: string, index: number) => {
     setHoverAvatar(null);
 
+  const isMobile = window.innerWidth <= 768; // breakpoint per iPhone / mobile
+  const scrollMultiplier = isMobile ? 31 : 62;
+
+ const targetScroll = index * scrollMultiplier;
+
+  const duration = 500; // durata in ms (più grande = più lento)
+  const startScroll = window.scrollY;
+  const distance = targetScroll - startScroll;
+  let startTime: number | null = null;
+
+  function scrollStep(timestamp: number) {
+    if (!startTime) startTime = timestamp;
+    const progress = Math.min((timestamp - startTime) / duration, 1); // 0 → 1
+    window.scrollTo(0, startScroll + distance * easeInOutQuad(progress));
+    if (progress < 1) {
+      window.requestAnimationFrame(scrollStep);
+    }
+  }
+
+  function easeInOutQuad(t: number) {
+    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+  }
+
+  window.setTimeout(() => {
+    window.requestAnimationFrame(scrollStep);
+  }, 350);
+
+  console.log('ciao ' + targetScroll);
+  
     const isSame = selectedDirector === name;
     setSelectedDirector(isSame ? null : name);
 
+     // scroll verticale
+
+
+
+
     // Delay per transizione max-height
-    setTimeout(() => {
+{ /*   setTimeout(() => {
       if (!isSame) {
         // scroll verticale al centro della viewport
         const section = sectionRefs.current[name];
         if (section) {
           section.scrollIntoView({
             behavior: "smooth",
-            block: "center",
+            block: "end",
           });
         }
 
@@ -85,6 +121,7 @@ export default function DirectorsList({ directors }: Props) {
         if (scroller) scroller.scrollLeft = 0;
       }
     }, 350);
+    */}
   };
 
   /* ================= OPEN LIGHTBOX ================= */
@@ -135,7 +172,7 @@ export default function DirectorsList({ directors }: Props) {
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {directors.map((director) => {
+        {directors.map((director, i) => {
           const isOpen = selectedDirector === director.name;
 
           return (
@@ -155,7 +192,7 @@ export default function DirectorsList({ directors }: Props) {
                   marginInline: "auto",
                   width: "fit-content",
                 }}
-                onClick={() => handleClickDirector(director.name)}
+                onClick={() => handleClickDirector(director.name, i)}
                 onMouseEnter={(e) => {
                   if (!canHover || isOpen || !director.avatar?.url) return;
                   setHoverAvatar({
@@ -185,11 +222,11 @@ export default function DirectorsList({ directors }: Props) {
                 {director.name}
               </h2>
 
-              <div
+              <div className="questoDesktop"
                 style={{
                   maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
+                  transition: "max-height .6s ease-in-out",
                   marginTop: "6px",
                 }}
               >
@@ -197,7 +234,7 @@ export default function DirectorsList({ directors }: Props) {
                   className="creativeDiv"
                   ref={(el) => {
                      scrollerRefs.current[director.name] = el; // solo assegnamento
-                  }}
+                      }}
                   style={{
                     cursor: isDragging ? "grabbing" : "grab",
                   }}
@@ -234,11 +271,17 @@ export default function DirectorsList({ directors }: Props) {
                     <img
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
-                      style={{ width: "40%" }}
+                      style={{ width: "26%" }}
                       alt=""
                     />
                     <div>
-                      {director.info?.markdown}
+
+        <div
+            style={{
+              
+            }}
+            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
+          />
                       <br />
                       <br />
                       To book {director.name.split(" ")[0]} please{" "}
@@ -275,6 +318,108 @@ export default function DirectorsList({ directors }: Props) {
                   ))}
                 </div>
               </div>
+
+
+
+              <div className="questoMobile"
+                style={{
+                  maxHeight: isOpen ? "85vh" : "0px",
+                  overflow: "hidden",
+                  transition: "max-height 0.5s ease-in",
+                  marginTop: "6px",
+                }}
+              >
+                <div
+                  className="creativeDiv"
+                 
+                  style={{  height:'85vH', overflowY:'hidden',
+                    cursor: isDragging ? "grabbing" : "grab", display:'block'
+                  }}
+                  onMouseDown={(e) => {
+                    const el = scrollerRefs.current[director.name];
+                    if (!el) return;
+                    dragStartX.current = e.clientX;
+                    scrollStartX.current = el.scrollLeft;
+                    dragDistance.current = 0;
+                    setIsDragging(false);
+                  }}
+                  onMouseMove={(e) => {
+                    const el = scrollerRefs.current[director.name];
+                    if (!el || dragStartX.current === null) return;
+                    const dx = e.clientX - dragStartX.current;
+                    dragDistance.current = Math.abs(dx);
+                    if (dragDistance.current > DRAG_THRESHOLD) {
+                      setIsDragging(true);
+                      el.scrollLeft = scrollStartX.current - dx;
+                    }
+                  }}
+                  onMouseUp={() => {
+                    dragStartX.current = null;
+                    setIsDragging(false);
+                  }}
+                  onMouseLeave={() => {
+                    dragStartX.current = null;
+                    setIsDragging(false);
+                  }}
+                >
+                  {/* About */}
+                  <div className="creativeAbout">
+                    <div>About {director.name}</div>
+                    <img
+                      className={isOpen ? "avatarBobble" : ""}
+                      src={director.avatar?.url}
+                      style={{ width: "26%", marginInline:'auto' }}
+                      alt=""
+                    />
+                    <div>
+                      <div
+            style={{
+            
+            }}
+            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
+          />
+                      <br />
+                      <br />
+                      To book {director.name.split(" ")[0]} please{" "}
+                      <a href="/contact" style={{ textDecoration: "underline" }}>
+                        contact us
+                      </a>
+                    </div>
+                  </div>
+
+                  {/* Projects */}
+
+               <div style={{display:'flex', gap:16, overflowX:'auto', paddingInline:'10px'}}>
+                  {director.projects?.map((project, index) => (
+                    <div 
+                      key={`${project.title}-${index}`}
+                      className="projectDiv"
+                      onMouseUp={() => {
+                        if (isDragging) return;
+                        openProjectGallery(project);
+                      }}
+                    >
+                      {project.thumbnail?.url && (
+                        <img style={{maxHeight:'25vH'}}
+                          className="projectThumbnail"
+                          src={project.thumbnail.url}
+                          alt={project.title}
+                          loading="eager"
+                        />
+                      )}
+                      <div className="projectText">
+                        {project.title}
+                        <br />
+                        {project.client}
+                      </div>
+                    </div>
+                  ))}
+
+                  </div>
+                </div>
+              </div>
+
+
             </div>
           );
         })}
