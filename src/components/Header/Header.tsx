@@ -44,6 +44,7 @@ export default function Header() {
         style={{
           display: "flex",
           padding: "20px",
+          paddingTop:"13px",
           paddingBottom: "5px",
           position: "fixed",
           top: 0,
@@ -74,6 +75,7 @@ export default function Header() {
             const isCurrent = pathname === item.href;
             const isHovered = hovered === item.href;
             const opacity = isCurrent || isHovered ? 1 : 0.2;
+            const color = isCurrent || isHovered ? 'black' : '#c1c0c0';
 
             return (
               <Link
@@ -82,8 +84,8 @@ export default function Header() {
                 onMouseEnter={() => setHovered(item.href)}
                 onMouseLeave={() => setHovered(null)}
                 style={{
-                  opacity,
-                  transition: "opacity 0.3s",
+                  color,
+                  transition: "color .3s",
                 }}
               >
                 {item.label}
