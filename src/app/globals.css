@@ -243,9 +243,9 @@ a {
     width: 60vW;
 }
 .lightboxImage{
-  width: auto;
-  max-width: 98vW;
-    max-height: 96vh;
+  width: 85vw;
+  max-width: 85vw;
+    max-height: 94vh;
     object-fit: contain;
     user-select: none;
     pointer-events: auto;
@@ -298,8 +298,12 @@ and (orientation : portrait) {
 .noDesktop{
   display: block;
 }
+.noMobile{
+  visibility: hidden;
+}
 .lightboxImage{
   width: 98%;
+  max-width: 98%;
 }
 
 

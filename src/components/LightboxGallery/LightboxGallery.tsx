@@ -146,6 +146,7 @@ useEffect(() => {
 
       {/* Pulsanti avanti/indietro */}
       <button
+        className='noMobile'
         onClick={(e) => { e.stopPropagation(); goPrev(); }}
         style={{
           position: 'fixed',
@@ -164,6 +165,7 @@ useEffect(() => {
         ‹
       </button>
       <button
+        className='noMobile'
         onClick={(e) => { e.stopPropagation(); goNext(); }}
         style={{
           position: 'fixed',
@@ -190,7 +192,7 @@ useEffect(() => {
           overflowX: 'auto',
           scrollSnapType: 'x mandatory',
           width: '100%',
-          height: '100%',
+          height: '102%',
           touchAction: 'pan-x',
           WebkitOverflowScrolling: 'touch',
           overscrollBehaviorX: 'contain',

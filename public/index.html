@@ -424,8 +424,9 @@
 
         <!-- FINAL COPY -->
         <p id="finalCopy" class="final-copy">
-       <button>creatives</button>
         </p>
+
+        <a href="/creatives" id="buttonCreatives" style="margin-top: 40px;display: none;margin-inline: auto;text-decoration: underline;font-size: 11px;">OUR WORK</a>
        
       </div>
     </main>
@@ -529,6 +530,7 @@ loadContent();
       const topBar = document.getElementById("topBar");
       const servicesWrapper = document.getElementById("servicesWrapper");
       const finalCopy = document.getElementById("finalCopy");
+      const buttonCreatives = document.getElementById("buttonCreatives");
 
       const LOGO_HOLD = 2500; // ms before logo starts disappearing
 
@@ -608,6 +610,13 @@ loadContent();
       function step4() {
         // 4) Show final paragraph in the middle; nav stays
         finalCopy.classList.add("visible");
+
+          
+
+  buttonCreatives.style.display = "block";
+ 
+
+       
       }
     });
   </script>
