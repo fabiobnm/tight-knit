@@ -173,7 +173,6 @@ useEffect(() => {
                     paddingBottom: "30px",
                     overflowX: "auto",
                     gap: "16px",
-                    minHeight: "8vH",
                     maxHeight:'50vH',
                   }}
                 >

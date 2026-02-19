@@ -52,7 +52,7 @@ export default function Header() {
           width: "100vw",
           zIndex: 99,
           alignItems: "center",
-          background: menuOpen ? "white" : "url('/gradient.webp') center / cover no-repeat",
+          background: menuOpen ? "white" : "linear-gradient(180deg,rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 35%, rgba(255, 255, 255, 0.61) 64%, rgba(255, 255, 255, 0) 100%)",
         }}
       >
         {/* Logo */}
@@ -75,7 +75,7 @@ export default function Header() {
             const isCurrent = pathname === item.href;
             const isHovered = hovered === item.href;
             const opacity = isCurrent || isHovered ? 1 : 0.2;
-            const color = isCurrent || isHovered ? 'black' : '#c1c0c0';
+            const color = isCurrent || isHovered ? 'black' : '#8b8b8b';
 
             return (
               <Link
