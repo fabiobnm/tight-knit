@@ -389,7 +389,7 @@ export default function DirectorsList({ directors }: Props) {
 
                   {/* Projects */}
 
-               <div style={{display:'flex', gap:16, overflowX:'auto', paddingInline:'10px'}}>
+               <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px'}}>
                   {director.projects?.map((project, index) => (
                     <div 
                       key={`${project.title}-${index}`}

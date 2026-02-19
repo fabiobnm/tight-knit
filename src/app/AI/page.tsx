@@ -26,8 +26,8 @@ export default async function AIPage() {
 
   return (
     <Gsap404Page
-      images={ai.images}      // ✅ immagini
-      text={ai.text}           // ✅ testo HTML passato correttamente
+      images={ai.images}      
+      text={ai.text}         
     />
   );
 }
