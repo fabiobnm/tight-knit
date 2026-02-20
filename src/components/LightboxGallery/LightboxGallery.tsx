@@ -227,7 +227,7 @@ useEffect(() => {
       <div
         style={{
           position: 'fixed',
-          bottom: 40,
+          bottom: 20,
           left: '50%',
           transform: 'translateX(-50%)',
           color: 'white',
