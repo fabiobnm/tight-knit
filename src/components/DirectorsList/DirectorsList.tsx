@@ -85,14 +85,14 @@ useEffect(() => {
   const param = searchParams.get("c");
   if (!param) return;
 
-  const decoded = decodeURIComponent(param).toLowerCase();
+  // sostituisci _ con spazio
+  const decoded = param.replace(/_/g, " ").toLowerCase();
   const index = sortedDirectors.findIndex(
     d => d.name.toLowerCase() === decoded
   );
   if (index === -1) return;
   const match = sortedDirectors[index];
 
-  // Schedula il setState dopo il primo paint
   const t = setTimeout(() => {
     setSelectedDirector(match.name);
     smoothScrollToIndex(index);
@@ -126,23 +126,20 @@ useEffect(() => {
 
     setSelectedDirector(newValue);
 
-    if (newValue) {
-      router.replace(
-        `/creatives?c=${encodeURIComponent(newValue)}`,
-        { scroll: false }
-      );
+ if (newValue) {
+    const slug = newValue.replace(/\s+/g, "_");
+    router.replace(`/creatives?c=${slug}`, { scroll: false });
 
-      setTimeout(() => {
-        smoothScrollToIndex(index);
-      }, 350);
-    } else {
-      router.replace(`/creatives`, { scroll: false });
-    }
+    setTimeout(() => {
+      smoothScrollToIndex(index);
+    }, 350);
+  } else {
+    router.replace(`/creatives`, { scroll: false });
+  }
 
-    const scroller = scrollerRefs.current[name];
-    if (scroller) scroller.scrollLeft = 0;
-  };
-
+  const scroller = scrollerRefs.current[name];
+  if (scroller) scroller.scrollLeft = 0;
+};
   /* ================= LIGHTBOX ================= */
 
   const openProjectGallery = (project: Project) => {
