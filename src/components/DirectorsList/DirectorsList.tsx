@@ -201,7 +201,7 @@ useEffect(() => {
 
   useEffect(() => {
     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setCanHover(mq.matches);
+     setTimeout(() => setCanHover(mq.matches), 0); // ✅ defer state update
     const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
     mq.addEventListener("change", handler);
     return () => mq.removeEventListener("change", handler);
