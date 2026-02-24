@@ -80,27 +80,40 @@ export default function DirectorsList({ directors }: Props) {
 
   /* ================= OPEN FROM URL ================= */
 
-  useEffect(() => {
-    const param = searchParams.get("c");
-    if (!param) return;
+useEffect(() => {
+  const param = searchParams.get("c");
+  if (!param) return;
 
-    const decoded = decodeURIComponent(param).toLowerCase();
+  const decoded = decodeURIComponent(param).toLowerCase();
+  const index = sortedDirectors.findIndex(
+    d => d.name.toLowerCase() === decoded
+  );
+  if (index === -1) return;
+  const match = sortedDirectors[index];
 
-    const index = sortedDirectors.findIndex(
-      d => d.name.toLowerCase() === decoded
-    );
-
-    if (index === -1) return;
-
-    const match = sortedDirectors[index];
-
+  // Schedula il setState dopo il primo paint
+  const t = setTimeout(() => {
     setSelectedDirector(match.name);
+    smoothScrollToIndex(index);
+  }, 0);
 
-    setTimeout(() => {
-      smoothScrollToIndex(index);
-    }, 350);
+  return () => clearTimeout(t);
+}, [searchParams, sortedDirectors]);
 
-  }, [searchParams, sortedDirectors]);
+/* ================= HOVER DETECTION ================= */
+useEffect(() => {
+  const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const t = setTimeout(() => setCanHover(mq.matches), 0);
+
+  const handler = (e: MediaQueryListEvent) =>
+    setCanHover(e.matches);
+
+  mq.addEventListener("change", handler);
+  return () => {
+    clearTimeout(t);
+    mq.removeEventListener("change", handler);
+  };
+}, []);
 
   /* ================= CLICK DIRECTOR ================= */
 
