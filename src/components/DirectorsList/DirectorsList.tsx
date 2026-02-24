@@ -48,9 +48,6 @@ export default function DirectorsList({ directors }: Props) {
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
    const [canHover, setCanHover] = useState(false);
 
-   const mobileAvatarRef = useRef<HTMLImageElement | null>(null);
-const lastScrollY = useRef<number>(0);
-
   /* ================= CUSTOM SCROLL (TUO) ================= */
 
   const smoothScrollToIndex = (index: number) => {
@@ -188,13 +185,9 @@ useEffect(() => {
         velocity.current *= 0.4;
       }
 
-     if (avatarEl.current) {
-  avatarEl.current.style.transform = `rotate(${rotation.current}deg)`;
-}
-
-if (mobileAvatarRef.current) {
-  mobileAvatarRef.current.style.transform = `rotate(${rotation.current}deg)`;
-}
+      if (avatarEl.current) {
+        avatarEl.current.style.transform = `rotate(${rotation.current}deg)`;
+      }
 
       raf = requestAnimationFrame(animate);
     };
@@ -202,19 +195,6 @@ if (mobileAvatarRef.current) {
     animate();
     return () => cancelAnimationFrame(raf);
   }, []);
-
-  useEffect(() => {
-  const handleScroll = () => {
-    const currentY = window.scrollY;
-    const dy = currentY - lastScrollY.current;
-
-    velocity.current += dy * 0.08; // intensità impulso scroll
-    lastScrollY.current = currentY;
-  };
-
-  window.addEventListener("scroll", handleScroll, { passive: true });
-  return () => window.removeEventListener("scroll", handleScroll);
-}, []);
 
   /* ================= HOVER DETECTION ================= */
 
@@ -426,8 +406,6 @@ if (mobileAvatarRef.current) {
                   <div className="creativeAbout">
                     <div>About {director.name}</div>
                     <img
-                       ref={mobileAvatarRef}
-
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
                       style={{ width: "26%", marginInline:'auto' }}
