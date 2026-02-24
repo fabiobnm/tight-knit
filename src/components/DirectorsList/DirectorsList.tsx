@@ -326,14 +326,11 @@ useEffect(() => {
                           "Nessun contenuto AboutUs trovato.",
                       }}
                     />
-
                     <br />
                     <br />
-
-                    To book {director.name.split(" ")[0]} please{" "}
-                    <a href="/contact" style={{ textDecoration: "underline" }}>
-                      contact us
-                    </a>
+                   <p>
+  To book {director.name.split(" ")[0]} please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
+</p>
                   </div>
 
                   {director.projects?.map((project, index) => (
