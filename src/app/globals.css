@@ -258,6 +258,12 @@ a {
 .nero{
   background: rgba(0,0,0,0.92)
 }
+.gradientHeader{
+  
+    padding: 20px;
+    padding-top: 13px;
+    padding-bottom: 10px;
+}
 
 
 
@@ -317,6 +323,10 @@ and (orientation : portrait) {
 }
 .nero{
   background: black
+}
+
+.gradientHeader{
+  padding-bottom: 30px;
 }
 
 

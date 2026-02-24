@@ -40,19 +40,17 @@ export default function Header() {
   return (
     <header>
       <div
+      className="gradientHeader"
         ref={headerRef}
         style={{
           display: "flex",
-          padding: "20px",
-          paddingTop:"13px",
-          paddingBottom: "10px",
           position: "fixed",
           top: 0,
           left: 0,
           width: "100vw",
           zIndex: 99,
           alignItems: "center",
-          background: menuOpen ? "white" : "linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 45%, rgba(255, 255, 255, 0.96) 55%, rgba(255, 255, 255, 0.85) 65%, rgba(255, 255, 255, 0.65) 75%, rgba(255, 255, 255, 0.35) 88%, rgba(255, 255, 255, 0) 100%);",
+          background: menuOpen ? "white" : "linear-gradient(to bottom, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 45%, rgba(255, 255, 255, 0.96) 55%, rgba(255, 255, 255, 0.85) 65%, rgba(255, 255, 255, 0.65) 75%, rgba(255, 255, 255, 0.35) 88%, rgba(255, 255, 255, 0) 100%)",
         }}
       >
         {/* Logo */}
