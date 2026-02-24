@@ -52,20 +52,18 @@ export default function Header() {
           width: "100vw",
           zIndex: 99,
           alignItems: "center",
-          background: menuOpen ? "white" : "linear-gradient(180deg,rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.85) 35%, rgba(255, 255, 255, 0.61) 64%, rgba(255, 255, 255, 0) 100%)",
+          background: menuOpen ? "white" : "linear-gradient(180deg,rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 1) 45%, rgba(255, 255, 255, 0.85) 63%, rgba(255, 255, 255, 0) 100%)",
         }}
       >
         {/* Logo */}
         <Link style={{ outline: "none",
             boxShadow: "none",
             WebkitTapHighlightColor: "transparent",}} href="/">
-          <Image
-            
+          <img
+    
             src="/Logo.svg"
             alt="Logo"
-            width={150}
-            height={25}
-            priority
+            style={{height:'20px'}}
           />
         </Link>
 
@@ -99,7 +97,8 @@ export default function Header() {
            position: "fixed",
             top: "46px",
             height: "38px",
-            width: "100vw",
+            left:'0',
+            width: "101vw",
             background: menuOpen ? "white" : "transparent",
 
         }}>
