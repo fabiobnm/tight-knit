@@ -97,7 +97,7 @@ export default function Header() {
         {/* Toggle button */}
         <div className="noDesktop" style={{
            position: "fixed",
-            top: "53px",
+            top: "46px",
             height: "38px",
             width: "100vw",
             background: menuOpen ? "white" : "transparent",
@@ -108,12 +108,12 @@ export default function Header() {
           onClick={() => setMenuOpen((v) => !v)}
           style={{
             position: "fixed",
-            top: "53px",
+            top: "7px",
             height: "38px",
             width: "min-content",
-            textAlign: "left",
-            left: 0,
-            paddingLeft: "20px",
+            textAlign: "center",
+            right: 0,
+            paddingRight: "20px",
             color: "black",
             fontSize: "20px",
             background: menuOpen ? "white" : "transparent",
@@ -138,12 +138,12 @@ export default function Header() {
             className="HeaderMobile"
             style={{
               position: "fixed",
-              top: "90px",
+              top: "82px",
               width: "100%",
               background: "white",
               paddingBottom: "15px",
               left: 0,
-              paddingLeft: "20px",
+              textAlign:'center',
               display: "flex",
               flexDirection: "column",
               gap: "12px",

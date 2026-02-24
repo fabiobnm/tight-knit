@@ -180,12 +180,12 @@ useEffect(() => {
             style={{ width:'60vW', marginInline:'auto',
               textAlign: "center", 
             }}
-            dangerouslySetInnerHTML={{ __html: writer.bio?.html ?? "Nessun contenuto AboutUs trovato." }}
+            dangerouslySetInnerHTML={{ __html: writer.bio?.html ?? " " }}
           />
 
                  <div style={{width:'60vW', marginInline:'auto', textAlign:'center'}}>
                      <br /><br />
-                     To get examples of their work please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
+                     For samples of their work please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
                  </div>
 
                

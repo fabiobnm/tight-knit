@@ -264,12 +264,12 @@ const sortedDirectors = [...directors].sort((a, b) =>
                     />
                     <div>
 
-        <div
-            style={{
-              
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
+                  <div
+                      style={{
+                        
+                      }}
+                      dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
+                    />
                       <br />
                       <br />
                       To book {director.name.split(" ")[0]} please{" "}
@@ -361,11 +361,11 @@ const sortedDirectors = [...directors].sort((a, b) =>
                     />
                     <div>
                       <div
-            style={{
-            
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
+                     style={{
+                        
+                        }}
+                        dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
+                      />
                       <br />
                       <br />
                       To book {director.name.split(" ")[0]} please{" "}
@@ -377,7 +377,7 @@ const sortedDirectors = [...directors].sort((a, b) =>
 
                   {/* Projects */}
 
-               <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px'}}>
+                  <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px'}}>
                   {director.projects?.map((project, index) => (
                     <div 
                       key={`${project.title}-${index}`}
@@ -404,12 +404,12 @@ const sortedDirectors = [...directors].sort((a, b) =>
                   ))}
 
                   </div>
-                </div>
-              </div>
+                  </div>
+                 </div>
 
 
-            </div>
-          );
+                 </div>
+                );
         })}
       </ul>
 
