@@ -1,10 +1,9 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import type { Director, Project } from "@/lib/queries/directors";
 import LightboxGallery from "@/components/LightboxGallery/LightboxGallery";
-import { log, time } from "node:console";
-import { setTimeout } from "node:timers/promises";
 
 type Props = {
   directors: Director[];
@@ -24,112 +23,120 @@ type HoverAvatar = {
 } | null;
 
 export default function DirectorsList({ directors }: Props) {
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  /* ================= SORT UMANO ================= */
+
+  const normalize = (s: string) =>
+    s.replace(/\u00A0/g, " ").replace(/\s+/g, " ").trim().toLowerCase();
+
+  const sortedDirectors = useMemo(() => {
+    return [...directors].sort((a, b) =>
+      normalize(a.name).localeCompare(normalize(b.name), "en")
+    );
+  }, [directors]);
+
+  /* ================= STATE ================= */
+
   const [selectedDirector, setSelectedDirector] = useState<string | null>(null);
   const [lightbox, setLightbox] = useState<LightboxState>(null);
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
 
-  // ref per scroll orizzontale e per scroll verticale
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
-  /* ================= AVATAR WOBBLE ================= */
-  const rotation = useRef(0);
-  const velocity = useRef(0);
-  const avatarEl = useRef<HTMLImageElement | null>(null);
-  const lastMouse = useRef<{ x: number; t: number } | null>(null);
+  /* ================= CUSTOM SCROLL (TUO) ================= */
 
-  const clamp = (v: number, min: number, max: number) =>
-    Math.max(min, Math.min(max, v));
+  const smoothScrollToIndex = (index: number) => {
+    const isMobile = window.innerWidth <= 768;
+    const scrollMultiplier = isMobile ? 31 : 62;
 
-  /* ================= DRAG SCROLL ================= */
-  const dragStartX = useRef<number | null>(null);
-  const scrollStartX = useRef(0);
-  const dragDistance = useRef(0);
-  const DRAG_THRESHOLD = 6;
+    const targetScroll = index * scrollMultiplier;
 
-  /* ================= HOVER DETECTION ================= */
-  const [canHover, setCanHover] = useState(() => {
-    if (typeof window !== "undefined") {
-      return window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+    const duration = 500;
+    const startScroll = window.scrollY;
+    const distance = targetScroll - startScroll;
+    let startTime: number | null = null;
+
+    function easeInOutQuad(t: number) {
+      return t < 0.5
+        ? 2 * t * t
+        : -1 + (4 - 2 * t) * t;
     }
-    return false;
-  });
+
+    function scrollStep(timestamp: number) {
+      if (!startTime) startTime = timestamp;
+      const progress = Math.min((timestamp - startTime) / duration, 1);
+      window.scrollTo(0, startScroll + distance * easeInOutQuad(progress));
+      if (progress < 1) {
+        requestAnimationFrame(scrollStep);
+      }
+    }
+
+    requestAnimationFrame(scrollStep);
+  };
+
+  /* ================= OPEN FROM URL ================= */
 
   useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+    const param = searchParams.get("c");
+    if (!param) return;
+
+    const decoded = decodeURIComponent(param).toLowerCase();
+
+    const index = sortedDirectors.findIndex(
+      d => d.name.toLowerCase() === decoded
+    );
+
+    if (index === -1) return;
+
+    const match = sortedDirectors[index];
+
+    setSelectedDirector(match.name);
+
+    setTimeout(() => {
+      smoothScrollToIndex(index);
+    }, 350);
+
+  }, [searchParams, sortedDirectors]);
 
   /* ================= CLICK DIRECTOR ================= */
+
   const handleClickDirector = (name: string, index: number) => {
     setHoverAvatar(null);
 
-  const isMobile = window.innerWidth <= 768; // breakpoint per iPhone / mobile
-  const scrollMultiplier = isMobile ? 31 : 62;
-
- const targetScroll = index * scrollMultiplier;
-
-  const duration = 500; // durata in ms (più grande = più lento)
-  const startScroll = window.scrollY;
-  const distance = targetScroll - startScroll;
-  let startTime: number | null = null;
-
-  function scrollStep(timestamp: number) {
-    if (!startTime) startTime = timestamp;
-    const progress = Math.min((timestamp - startTime) / duration, 1); // 0 → 1
-    window.scrollTo(0, startScroll + distance * easeInOutQuad(progress));
-    if (progress < 1) {
-      window.requestAnimationFrame(scrollStep);
-    }
-  }
-
-  function easeInOutQuad(t: number) {
-    return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
-  }
-
-  window.setTimeout(() => {
-    window.requestAnimationFrame(scrollStep);
-  }, 350);
-
-  console.log('ciao ' + targetScroll);
-  
     const isSame = selectedDirector === name;
-    setSelectedDirector(isSame ? null : name);
+    const newValue = isSame ? null : name;
 
-     // scroll verticale
+    setSelectedDirector(newValue);
 
+    if (newValue) {
+      router.replace(
+        `/creatives?c=${encodeURIComponent(newValue)}`,
+        { scroll: false }
+      );
 
+      setTimeout(() => {
+        smoothScrollToIndex(index);
+      }, 350);
+    } else {
+      router.replace(`/creatives`, { scroll: false });
+    }
 
-
-    // Delay per transizione max-height
-{ /*   setTimeout(() => {
-      if (!isSame) {
-        // scroll verticale al centro della viewport
-        const section = sectionRefs.current[name];
-        if (section) {
-          section.scrollIntoView({
-            behavior: "smooth",
-            block: "end",
-          });
-        }
-
-        // reset scroll orizzontale del contenitore creativo
-        const scroller = scrollerRefs.current[name];
-        if (scroller) scroller.scrollLeft = 0;
-      }
-    }, 350);
-    */}
+    const scroller = scrollerRefs.current[name];
+    if (scroller) scroller.scrollLeft = 0;
   };
 
-  /* ================= OPEN LIGHTBOX ================= */
+  /* ================= LIGHTBOX ================= */
+
   const openProjectGallery = (project: Project) => {
     const images: string[] = [];
-    project.gallery?.forEach((img) => {
+    project.gallery?.forEach(img => {
       if (img?.url) images.push(img.url);
     });
+
     if (!images.length) return;
 
     setLightbox({
@@ -140,7 +147,16 @@ export default function DirectorsList({ directors }: Props) {
     });
   };
 
-  /* ================= AVATAR SPRING ================= */
+  /* ================= AVATAR WOBBLE ================= */
+
+  const rotation = useRef(0);
+  const velocity = useRef(0);
+  const avatarEl = useRef<HTMLImageElement | null>(null);
+  const lastMouse = useRef<{ x: number; t: number } | null>(null);
+
+  const clamp = (v: number, min: number, max: number) =>
+    Math.max(min, Math.min(max, v));
+
   useEffect(() => {
     let raf: number;
     const SPRING = 0.12;
@@ -154,10 +170,6 @@ export default function DirectorsList({ directors }: Props) {
       rotation.current += velocity.current;
       rotation.current = clamp(rotation.current, -MAX_ROTATION, MAX_ROTATION);
 
-      if (rotation.current === MAX_ROTATION || rotation.current === -MAX_ROTATION) {
-        velocity.current *= 0.4;
-      }
-
       if (avatarEl.current) {
         avatarEl.current.style.transform = `rotate(${rotation.current}deg)`;
       }
@@ -169,19 +181,38 @@ export default function DirectorsList({ directors }: Props) {
     return () => cancelAnimationFrame(raf);
   }, []);
 
+  /* ================= HOVER DETECTION ================= */
+
+  const [canHover, setCanHover] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+    setCanHover(mq.matches);
+    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+    mq.addEventListener("change", handler);
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  /* ================= DRAG ================= */
+
+  const dragStartX = useRef<number | null>(null);
+  const scrollStartX = useRef(0);
+  const dragDistance = useRef(0);
+  const DRAG_THRESHOLD = 6;
+
+  /* ================= RENDER ================= */
+
   return (
     <>
       <ul style={{ listStyle: "none", padding: 0, margin: 0 }}>
-        {directors.map((director, i) => {
+        {sortedDirectors.map((director, i) => {
           const isOpen = selectedDirector === director.name;
 
           return (
-          <div
-  key={director.name}
-  ref={(el) => {
-    sectionRefs.current[director.name] = el; // assegna ma non ritorna nulla
-  }}
->
+            <div
+              key={director.name}
+              ref={(el) => {(sectionRefs.current[director.name] = el)}}
+            >
               <h2
                 className={`nameDirector ${isOpen ? "nameDirector--active" : ""}`}
                 style={{
@@ -210,7 +241,7 @@ export default function DirectorsList({ directors }: Props) {
                     if (dt > 0) velocity.current += (dx / dt) * 18;
                   }
                   lastMouse.current = { x: e.clientX, t: now };
-                  setHoverAvatar((prev) =>
+                  setHoverAvatar(prev =>
                     prev ? { ...prev, x: e.clientX, y: e.clientY } : null
                   );
                 }}
@@ -222,22 +253,20 @@ export default function DirectorsList({ directors }: Props) {
                 {director.name}
               </h2>
 
-              <div className="questoDesktop"
+              {/* DESKTOP */}
+              <div
+                className="questoDesktop"
                 style={{
                   maxHeight: isOpen ? "60vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height .6s ease-in-out",
-                  marginTop: "6px",
+                  marginTop: 6,
                 }}
               >
                 <div
                   className="creativeDiv"
-                  ref={(el) => {
-                     scrollerRefs.current[director.name] = el; // solo assegnamento
-                      }}
-                  style={{
-                    cursor: isDragging ? "grabbing" : "grab",
-                  }}
+                  ref={(el) => {(scrollerRefs.current[director.name] = el)}}
+                  style={{ cursor: isDragging ? "grabbing" : "grab" }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el) return;
@@ -265,33 +294,33 @@ export default function DirectorsList({ directors }: Props) {
                     setIsDragging(false);
                   }}
                 >
-                  {/* About */}
                   <div className="creativeAbout">
                     <div>About {director.name}</div>
+
                     <img
                       className={isOpen ? "avatarBobble" : ""}
                       src={director.avatar?.url}
                       style={{ width: "26%" }}
                       alt=""
                     />
-                    <div>
 
-        <div
-            style={{
-              
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
-                      <br />
-                      <br />
-                      To book {director.name.split(" ")[0]} please{" "}
-                      <a href="/contact" style={{ textDecoration: "underline" }}>
-                        contact us
-                      </a>
-                    </div>
+                    <div
+                      dangerouslySetInnerHTML={{
+                        __html:
+                          director.info?.html ??
+                          "Nessun contenuto AboutUs trovato.",
+                      }}
+                    />
+
+                    <br />
+                    <br />
+
+                    To book {director.name.split(" ")[0]} please{" "}
+                    <a href="/contact" style={{ textDecoration: "underline" }}>
+                      contact us
+                    </a>
                   </div>
 
-                  {/* Projects */}
                   {director.projects?.map((project, index) => (
                     <div
                       key={`${project.title}-${index}`}
@@ -318,114 +347,11 @@ export default function DirectorsList({ directors }: Props) {
                   ))}
                 </div>
               </div>
-
-
-
-              <div className="questoMobile"
-                style={{
-                  maxHeight: isOpen ? "85vh" : "0px",
-                  overflow: "hidden",
-                  transition: "max-height 0.5s ease-in",
-                  marginTop: "6px",
-                }}
-              >
-                <div
-                  className="creativeDiv"
-                 
-                  style={{  height:'85vH', overflowY:'hidden',
-                    cursor: isDragging ? "grabbing" : "grab", display:'block'
-                  }}
-                  onMouseDown={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el) return;
-                    dragStartX.current = e.clientX;
-                    scrollStartX.current = el.scrollLeft;
-                    dragDistance.current = 0;
-                    setIsDragging(false);
-                  }}
-                  onMouseMove={(e) => {
-                    const el = scrollerRefs.current[director.name];
-                    if (!el || dragStartX.current === null) return;
-                    const dx = e.clientX - dragStartX.current;
-                    dragDistance.current = Math.abs(dx);
-                    if (dragDistance.current > DRAG_THRESHOLD) {
-                      setIsDragging(true);
-                      el.scrollLeft = scrollStartX.current - dx;
-                    }
-                  }}
-                  onMouseUp={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                  onMouseLeave={() => {
-                    dragStartX.current = null;
-                    setIsDragging(false);
-                  }}
-                >
-                  {/* About */}
-                  <div className="creativeAbout">
-                    <div>About {director.name}</div>
-                    <img
-                      className={isOpen ? "avatarBobble" : ""}
-                      src={director.avatar?.url}
-                      style={{ width: "26%", marginInline:'auto' }}
-                      alt=""
-                    />
-                    <div>
-                      <div
-            style={{
-            
-            }}
-            dangerouslySetInnerHTML={{ __html: director.info?.html ?? "Nessun contenuto AboutUs trovato." }}
-          />
-                      <br />
-                      <br />
-                      To book {director.name.split(" ")[0]} please{" "}
-                      <a href="/contact" style={{ textDecoration: "underline" }}>
-                        contact us
-                      </a>
-                    </div>
-                  </div>
-
-                  {/* Projects */}
-
-               <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px'}}>
-                  {director.projects?.map((project, index) => (
-                    <div 
-                      key={`${project.title}-${index}`}
-                      className="projectDiv"
-                      onMouseUp={() => {
-                        if (isDragging) return;
-                        openProjectGallery(project);
-                      }}
-                    >
-                      {project.thumbnail?.url && (
-                        <img style={{maxHeight:'25vH'}}
-                          className="projectThumbnail"
-                          src={project.thumbnail.url}
-                          alt={project.title}
-                          loading="eager"
-                        />
-                      )}
-                      <div className="projectText">
-                        {project.title}
-                        <br />
-                        {project.client}
-                      </div>
-                    </div>
-                  ))}
-
-                  </div>
-                </div>
-              </div>
-
-
             </div>
           );
         })}
       </ul>
 
-      {/* Avatar hover */}
       {canHover && hoverAvatar && (
         <img
           ref={avatarEl}
@@ -435,7 +361,7 @@ export default function DirectorsList({ directors }: Props) {
             position: "fixed",
             top: hoverAvatar.y - 50,
             left: hoverAvatar.x + 20,
-            width: "100px",
+            width: 100,
             pointerEvents: "none",
             zIndex: 9999,
             transformOrigin: "center",
@@ -443,7 +369,6 @@ export default function DirectorsList({ directors }: Props) {
         />
       )}
 
-      {/* Lightbox */}
       {lightbox && (
         <LightboxGallery
           images={lightbox.images}

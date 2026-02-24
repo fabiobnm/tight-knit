@@ -103,11 +103,11 @@ useEffect(() => {
 
   return (
     <div
+    className='nero'
     onClick={onClose}
       style={{
         position: 'fixed',
         inset: 0,
-        background: 'rgba(0,0,0,0.92)',
         zIndex: 1000,
       }}
     >

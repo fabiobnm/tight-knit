@@ -255,6 +255,10 @@ a {
   display: none;
 }
 
+.nero{
+  background: rgba(0,0,0,0.92)
+}
+
 
 
 @media (prefers-color-scheme: dark) {
@@ -311,6 +315,10 @@ and (orientation : portrait) {
   font-size: 35px;
   line-height: 1.6rem;
 }
+.nero{
+  background: black
+}
+
 
 .creativeDiv{
     margin-top: 15px;
