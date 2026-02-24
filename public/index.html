@@ -245,8 +245,8 @@
 /*     per menu mobile             */
 .buttonHeaderMobile {
   position: fixed;
-  top: 60px;
-  left: 20px;
+  top: 16px;
+  left: calc(100vW - 32px);
   font-size: 20px;
   background: none;
   color: black;
@@ -261,16 +261,19 @@
 
 .HeaderMobile {
   position: fixed;
-  top: 90px;
+  top: 37px;
+
   left: 0px;
-  padding-left: 20px;
+  padding-left: 0px;
   width: 100vW;
   background: white;
   line-height: 3;
   padding-bottom: 15px;
+  padding-top: 40px;
   font-size: 11px;
   display: none;
   flex-direction: column;
+  text-align: center;
   gap: 12px;
 }
 
@@ -357,13 +360,13 @@
     <!-- TOP BAR WITH SMALL SVG LOGO + NAV -->
       <header id="topBar" class="top-bar">
       
-      <div class="logo-block" style='display:flex; padding:20px;padding-top:13px;padding-bottom:5px; position:fixed; top:0;left:0;width:100vW;z-index:99' >
+      <div class="logo-block" style='display:flex; padding:20px;padding-top:13px;padding-bottom:5px; position:fixed; top:0;left:0;width:100vW;z-index:99; background-color: white;' >
       
         <a href="/">
           <img
           src="/Logo.svg"
           alt="Next.js logo"
-          style="width: 150px;height: 25px"
+          style="height: 20px"
          
           priority
         />

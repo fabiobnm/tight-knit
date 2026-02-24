@@ -95,7 +95,7 @@ export default function Header() {
         {/* Toggle button */}
         <div className="noDesktop" style={{
            position: "fixed",
-            top: "46px",
+            top: "42px",
             height: "38px",
             left:'0',
             width: "101vw",
@@ -137,7 +137,7 @@ export default function Header() {
             className="HeaderMobile"
             style={{
               position: "fixed",
-              top: "82px",
+              top: "79px",
               width: "100%",
               background: "white",
               paddingBottom: "15px",
