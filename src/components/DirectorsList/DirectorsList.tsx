@@ -171,7 +171,7 @@ useEffect(() => {
   const clamp = (v: number, min: number, max: number) =>
     Math.max(min, Math.min(max, v));
 
-  useEffect(() => {
+ useEffect(() => {
     let raf: number;
     const SPRING = 0.12;
     const DAMPING = 0.82;
@@ -183,6 +183,10 @@ useEffect(() => {
       velocity.current *= DAMPING;
       rotation.current += velocity.current;
       rotation.current = clamp(rotation.current, -MAX_ROTATION, MAX_ROTATION);
+
+      if (rotation.current === MAX_ROTATION || rotation.current === -MAX_ROTATION) {
+        velocity.current *= 0.4;
+      }
 
       if (avatarEl.current) {
         avatarEl.current.style.transform = `rotate(${rotation.current}deg)`;
