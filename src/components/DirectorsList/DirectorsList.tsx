@@ -46,6 +46,7 @@ export default function DirectorsList({ directors }: Props) {
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
+   const [canHover, setCanHover] = useState(false);
 
   /* ================= CUSTOM SCROLL (TUO) ================= */
 
@@ -196,7 +197,7 @@ useEffect(() => {
 
   /* ================= HOVER DETECTION ================= */
 
-  const [canHover, setCanHover] = useState(false);
+ 
 
   useEffect(() => {
     const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
