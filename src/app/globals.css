@@ -140,6 +140,10 @@ div{
   animation: opacAnim;
   animation-duration: .2s;
 }
+.opacityAnimLong{
+  animation: opacAnim;
+  animation-duration: 2s;
+}
 
 @keyframes opacAnim {
   from {opacity: 0}

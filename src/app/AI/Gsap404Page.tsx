@@ -86,7 +86,7 @@ export default function Gsap404Page({ images, text }: Props) {
   }, [safeImages]);
 
   return (
-    <div>
+    <div className='opacityAnimLong'>
       <Header />
 
       {/* Testo AI che scompare */}
