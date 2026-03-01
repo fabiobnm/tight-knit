@@ -120,7 +120,6 @@ export default function Gsap404Page({ images, text }: Props) {
               }}
             >
               <img src={img.image.url} alt="" />
-              <a href="">{img.top}</a>
             </div>
           ))}
         </section>
@@ -171,10 +170,11 @@ export default function Gsap404Page({ images, text }: Props) {
         }
 
         .card img {
-          width: 100%;
           height: 100%;
+          width:auto;
           object-fit: cover;
         }
+    
 
         .card:hover {
           z-index: 99;
@@ -189,6 +189,9 @@ export default function Gsap404Page({ images, text }: Props) {
         .l { height: 30vh; width: fit-content; }
         .m { height: 20vh; width: fit-content; }
         .s { height: 15vh; width: fit-content; }
+
+
+     
       `}</style>
     </div>
   );
