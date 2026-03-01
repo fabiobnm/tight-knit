@@ -131,7 +131,7 @@ export default function Gsap404Page({ images, text }: Props) {
               id={`card-${index + 1}`}
               className={`card ${img.top} ${img.size}`}
               style={{
-                left: `calc(${-(index+1) * 50}vW - 100px)`,
+                left: `calc(${-(index+1) * 45}vW - 100px)`,
                 
               }}
             >

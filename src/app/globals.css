@@ -35,7 +35,9 @@
   font-style: normal;
 }
 
-
+.cardIndex:hover{
+  z-index: 999999999;
+}
 .avatarBobble:hover {
   transform-origin: center ;
   animation: bobble 0.4s ease-in-out infinite alternate;

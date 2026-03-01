@@ -1,8 +1,7 @@
 // src/app/AI/Gsap404Page.tsx
-
 'use client';
 
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { gsap } from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Observer } from 'gsap/all';
@@ -15,22 +14,21 @@ type Props = {
   text?: {
     html: string;
   } | null;
-
 };
 
 export default function Gsap404Page({ images, text }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const safeImages = images ?? [];
-
-    // 🔥 log per debug
-  console.log("text prop:", text);
+  
+  // Stato per far scomparire il testo
+  const [scompare, setScompare] = useState(false);
 
   useEffect(() => {
     gsap.registerPlugin(ScrollTrigger, Observer);
 
     const ctx = gsap.context(() => {
-      /* ================= WRAPPER SCROLL ================= */
 
+      /* ================= WRAPPER SCROLL ================= */
       gsap.to('.wrapper-404', {
         x: '350vw',
         ease: 'none',
@@ -40,30 +38,37 @@ export default function Gsap404Page({ images, text }: Props) {
           end: '+=3000',
           scrub: true,
           pin: true,
+          onUpdate: (self) => {
+            const percent = self.progress * 100;
+            console.log('Scroll percent:', percent.toFixed(1));
+
+      // gestisci l'opacità direttamente con GSAP
+      if (percent >= 15 && percent <= 85) {
+        gsap.set('.textAI', { opacity: 0 });
+      } else {
+        gsap.set('.textAI', { opacity: 1 });
+      }
+    },
         },
       });
 
       /* ================= CARDS ================= */
-
       safeImages.forEach((img, index) => {
         const id = `#card-${index + 1}`;
 
-  const speedMap: Record<string, number> = {
-    slow: Math.floor(Math.random() * (1000 - 500 + 1)) + 500,
-  mid: Math.floor(Math.random() * (1900 - 1500 + 1)) + 1500,
-  fast: Math.floor(Math.random() * (2000 - 1800 + 1)) + 1800,
-  };
+        const speedMap: Record<string, number> = {
+          slow: Math.floor(Math.random() * (1000 - 500 + 1)) + 500,
+          mid: Math.floor(Math.random() * (1900 - 1500 + 1)) + 1500,
+          fast: Math.floor(Math.random() * (2000 - 1800 + 1)) + 1800,
+        };
 
-  const endTranslateX = speedMap[img.speed ?? 'mid'] ?? '';
-
-  console.log('rererere'+ endTranslateX)
+        const endTranslateX = speedMap[img.speed ?? 'mid'] ?? '';
 
         ScrollTrigger.create({
           trigger: id,
           start: 'top top',
           end: '+=3200',
           scrub: 1,
-
           onUpdate: (self) => {
             gsap.to(id, {
               x: endTranslateX * self.progress,
@@ -73,29 +78,6 @@ export default function Gsap404Page({ images, text }: Props) {
           },
         });
       });
-
-      /* ================= TRACKPAD ORIZZONTALE =================
-
-      Observer.create({
-        target: window,
-        type: 'wheel,touch,pointer',
-        tolerance: 8,
-        preventDefault: false,
-        onChange: (self) => {
-          const dx = self.deltaX;
-          const dy = self.deltaY;
-
-          // intercetta solo intento orizzontale
-          if (Math.abs(dx) > Math.abs(dy)) {
-            window.scrollBy({
-              top: dx * 1.2, // 🔥 regola QUI la velocità
-              behavior: 'auto',
-            });
-          }
-        },
-      });
-
-       */
 
       ScrollTrigger.refresh();
     }, rootRef);
@@ -107,24 +89,27 @@ export default function Gsap404Page({ images, text }: Props) {
     <div>
       <Header />
 
+      {/* Testo AI che scompare */}
       <div
-  style={{
-    position: 'fixed',
-    top: '50vh',
-    left: '50vw',
-    transform: 'translate(-50%, -50%)',
-    textAlign: 'center',
-    zIndex: 0,
-    pointerEvents: 'none',
-  }}
-    dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
-/>
+        className='textAI'
+        style={{
+          position: 'fixed',
+          top: '50vh',
+          left: '50vw',
+          transform: 'translate(-50%, -50%)',
+          textAlign: 'center',
+          zIndex: 0,
+          pointerEvents: 'none',
+          opacity: scompare ? 0 : 1, // cambia opacità in base allo stato
+          transition: 'opacity 0.3s ease',
+        }}
+        dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
+      />
 
       <div ref={rootRef} className="container" >
         <nav className="navvino" />
 
         <section className="wrapper-404">
-        
           {safeImages.map((img, index) => (
             <div
               key={index}
@@ -132,13 +117,11 @@ export default function Gsap404Page({ images, text }: Props) {
               className={`card ${img.top} ${img.size}`}
               style={{
                 left: `calc(${-(index+1) * 25}vW - 100px)`,
-                
               }}
             >
               <img src={img.image.url} alt="" />
               <a href="">{img.top}</a>
             </div>
-
           ))}
         </section>
       </div>
@@ -150,14 +133,13 @@ export default function Gsap404Page({ images, text }: Props) {
           box-sizing: border-box;
         }
 
-        html,
-        body {
+        html, body {
           width: 100%;
           height: 100%;
           background: white;
           overflow-x: hidden;
-            overscroll-behavior-x: contain; /* evita back/forward */
-  overscroll-behavior-y: contain; /* evita scroll “rubato” */
+          overscroll-behavior-x: contain;
+          overscroll-behavior-y: contain;
         }
 
         .container {
@@ -183,13 +165,6 @@ export default function Gsap404Page({ images, text }: Props) {
           will-change: transform;
         }
 
-        h1 {
-          width: 100%;
-          color: black;
-          font-size: 48vw;
-          text-align: center;
-        }
-
         .card {
           position: absolute;
           overflow: hidden;
@@ -205,37 +180,15 @@ export default function Gsap404Page({ images, text }: Props) {
           z-index: 99;
         }
 
-        .top {
-          top: 50px;
-        }
+        .top { top: 50px; }
+        .middleTop { top: 25vh; }
+        .middleBottom { bottom: 25vh; } 
+        .bottom { bottom: 0; }
 
-        .middle {
-          top: 25vh;
-        }
-
-        .bottom {
-          bottom: 0;
-        }
-
-        .xl {
-          height: 100vh;
-          width: fit-content;
-        }
-
-        .l {
-          height: 50vh;
-          width: fit-content;
-        }
-
-        .m {
-          height: 30vh;
-          width: fit-content;
-        }
-
-        .s {
-          height: 20vh;
-          width: fit-content;
-        }
+        .xl { height: 100vh; width: fit-content; }
+        .l { height: 30vh; width: fit-content; }
+        .m { height: 20vh; width: fit-content; }
+        .s { height: 15vh; width: fit-content; }
       `}</style>
     </div>
   );
