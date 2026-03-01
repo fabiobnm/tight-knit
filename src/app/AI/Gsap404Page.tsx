@@ -30,7 +30,7 @@ export default function Gsap404Page({ images, text }: Props) {
 
       /* ================= WRAPPER SCROLL ================= */
       gsap.to('.wrapper-404', {
-        x: '350vw',
+        x: '300vw',
         ease: 'none',
         scrollTrigger: {
           trigger: '.wrapper-404',
@@ -43,7 +43,7 @@ export default function Gsap404Page({ images, text }: Props) {
             console.log('Scroll percent:', percent.toFixed(1));
 
       // gestisci l'opacità direttamente con GSAP
-      if (percent >= 15 && percent <= 85) {
+      if (percent >= 15 ) {
         gsap.set('.textAI', { opacity: 0 });
       } else {
         gsap.set('.textAI', { opacity: 1 });
@@ -58,12 +58,13 @@ export default function Gsap404Page({ images, text }: Props) {
 
         const speedMap: Record<string, number> = {
           slow: Math.floor(Math.random() * (1000 - 500 + 1)) + 500,
-          mid: Math.floor(Math.random() * (1900 - 1500 + 1)) + 1500,
-          fast: Math.floor(Math.random() * (2000 - 1800 + 1)) + 1800,
+          mid: Math.floor(Math.random() * (2000 - 1000 + 1)) + 1000,
+          fast: Math.floor(Math.random() * (2500 - 2000 + 1)) + 2000,
         };
 
         const endTranslateX = speedMap[img.speed ?? 'mid'] ?? '';
 
+        console.log('questo è numero'+endTranslateX)
         ScrollTrigger.create({
           trigger: id,
           start: 'top top',
@@ -96,6 +97,7 @@ export default function Gsap404Page({ images, text }: Props) {
           position: 'fixed',
           top: '50vh',
           left: '50vw',
+          width:'65vW',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           zIndex: 0,
@@ -191,6 +193,10 @@ export default function Gsap404Page({ images, text }: Props) {
         .s { height: 15vh; width: fit-content; }
 
 
+@media (max-width: 600px) {
+
+
+}
      
       `}</style>
     </div>

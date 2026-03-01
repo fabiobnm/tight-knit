@@ -176,14 +176,12 @@ useEffect(() => {
                     maxHeight:'50vH',
                   }}
                 >
-                    <div
-            style={{ width:'60vW', marginInline:'auto',
-              textAlign: "center", 
-            }}
+                    <div className="textWriter"
+            
             dangerouslySetInnerHTML={{ __html: writer.bio?.html ?? " " }}
           />
 
-                 <div style={{width:'60vW', marginInline:'auto', textAlign:'center'}}>
+                 <div className="textWriter">
                      <br /><br />
                      For samples of their work please <a href="/contact" style={{textDecoration:'underline'}}>contact us</a>
                  </div>

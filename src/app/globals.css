@@ -270,6 +270,11 @@ a {
     padding-top: 13px;
     padding-bottom: 10px;
 }
+.textWriter{
+    width: 60vW;
+    margin-inline: auto;
+    text-align: center;
+}
 
 
 
@@ -369,5 +374,11 @@ and (orientation : portrait) {
 }
 .nameDirector{
   -webkit-text-stroke: .5px black;
+}
+
+.textWriter{
+    width: 75vW;
+    margin-inline: auto;
+    text-align: center;
 }
 }

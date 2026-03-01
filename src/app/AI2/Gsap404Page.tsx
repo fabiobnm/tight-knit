@@ -22,13 +22,13 @@ export default function ScrollImagePage({ images , text}: Props) {
 
     // assegna una velocità casuale a ciascuna immagine (0.5x - 2x)
     if (speedsRef.current.length === 0) {
-      speedsRef.current = safeImages.map(() => 0.5 + Math.random() * 1.5);
+      speedsRef.current = safeImages.map(() => 0.5 + Math.random() * 2.5);
     }
 
-    const startX = -0; // tutte partono fuori a sinistra
+    const startX = -400; // tutte partono fuori a sinistra
     const endX = window.innerWidth + 1000; // terminano oltre destra
     const scrollRange = 2000; // quanto scroll serve per completare l’animazione
-    const stagger = 250; // sfalsamento verticale / temporale
+    const stagger = 150; // sfalsamento verticale / temporale
 
     const handleScroll = () => {
       const scrollY = window.scrollY;
@@ -53,7 +53,7 @@ export default function ScrollImagePage({ images , text}: Props) {
   }, [safeImages]);
 
   return (
-    <div style={{ height: '800vh', position: 'relative' }}>
+    <div className='opacityAnimLong' style={{ height: '800vh', position: 'relative' }}>
       <Header />
 
          <div
@@ -69,34 +69,46 @@ export default function ScrollImagePage({ images , text}: Props) {
     dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
 />
 
-      {safeImages.map((img, i) => (
-        <img
-          key={i}
-          ref={(el) => { if (el) imgRefs.current[i] = el; }}
-          src={img.image.url}
-          className={`card cardIndex ${img.top} ${img.size}`}
-       
-          style={{
-            position: 'fixed',
-            // distanza verticale tra le immagini
-            left: '0px',
-            
-            transform: 'translateX(-500px)', // partenza fuori a sinistra
-            transition: 'transform 0.1s linear',
-            zIndex:  i - 100 ,
-          }}
-        />
-      ))}
+{safeImages.map((img, i) => (
+  <img
+    key={i}
+    ref={(el) => { if (el) imgRefs.current[i] = el; }}
+    src={img.image.url}
+    className={`cardino card cardIndex ${img.top} ${img.size}`}
+    onMouseEnter={(e) => {
+      e.currentTarget.style.zIndex = '9999';
+    }}
+    onMouseLeave={(e) => {
+      e.currentTarget.style.zIndex = String(200 + i);
+    }}
+    style={{
+      position: 'fixed',
+      left: '0px',
+      transform: 'translateX(-500px)',
+      transition: 'transform 0.1s linear',
+      zIndex: 200 + i,
+    }}
+  />
+))}
       <style jsx global>{`
       
-      
+       .cardino{
+       border:1px solid red
+       }
+        .cardino:hover{
+        border:10px solid red;
+        z-index:999
+        }
 
         .top {
           top: 50px;
         }
 
-        .middle {
+        .middleTop {
           top: 25vh;
+        }
+            .middleBottom {
+          bottom: 25vh;
         }
 
         .bottom {
@@ -109,17 +121,17 @@ export default function ScrollImagePage({ images , text}: Props) {
         }
 
         .l {
-          height: 50vh;
-          width: fit-content;
-        }
-
-        .m {
           height: 30vh;
           width: fit-content;
         }
 
-        .s {
+        .m {
           height: 20vh;
+          width: fit-content;
+        }
+
+        .s {
+          height: 15vh;
           width: fit-content;
         }
       `}</style>
