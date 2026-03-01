@@ -93,10 +93,8 @@ export default function ScrollImagePage({ images , text}: Props) {
       <style jsx global>{`
       
        .cardino{
-       border:1px solid red
        }
         .cardino:hover{
-        border:10px solid red;
         z-index:999
         }
 
@@ -117,22 +115,22 @@ export default function ScrollImagePage({ images , text}: Props) {
 
         .xl {
           height: 100vh;
-          width: fit-content;
+          width: auto;
         }
 
         .l {
           height: 30vh;
-          width: fit-content;
+          width: auto;
         }
 
         .m {
           height: 20vh;
-          width: fit-content;
+          width: auto;
         }
 
         .s {
           height: 15vh;
-          width: fit-content;
+          width: auto;
         }
       `}</style>
     </div>
