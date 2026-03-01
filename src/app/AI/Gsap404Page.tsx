@@ -8,12 +8,14 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Observer } from 'gsap/all';
 import Header from '@/components/Header/Header';
 import type { AIImage } from '@/lib/queries/AI';
+import { log } from 'console';
 
 type Props = {
   images: AIImage[];
   text?: {
     html: string;
   } | null;
+
 };
 
 export default function Gsap404Page({ images, text }: Props) {
@@ -43,15 +45,25 @@ export default function Gsap404Page({ images, text }: Props) {
 
       /* ================= CARDS ================= */
 
-      safeImages.forEach((_, index) => {
+      safeImages.forEach((img, index) => {
         const id = `#card-${index + 1}`;
-        const endTranslateX = gsap.utils.random(0, 5000);
+
+  const speedMap: Record<string, number> = {
+    slow: Math.floor(Math.random() * (1000 - 500 + 1)) + 500,
+  mid: Math.floor(Math.random() * (1900 - 1500 + 1)) + 1500,
+  fast: Math.floor(Math.random() * (2000 - 1800 + 1)) + 1800,
+  };
+
+  const endTranslateX = speedMap[img.speed ?? 'mid'] ?? '';
+
+  console.log('rererere'+ endTranslateX)
 
         ScrollTrigger.create({
           trigger: id,
           start: 'top top',
-          end: '+=1200',
+          end: '+=3200',
           scrub: 1,
+
           onUpdate: (self) => {
             gsap.to(id, {
               x: endTranslateX * self.progress,
@@ -62,7 +74,7 @@ export default function Gsap404Page({ images, text }: Props) {
         });
       });
 
-      /* ================= TRACKPAD ORIZZONTALE ================= */
+      /* ================= TRACKPAD ORIZZONTALE =================
 
       Observer.create({
         target: window,
@@ -82,6 +94,8 @@ export default function Gsap404Page({ images, text }: Props) {
           }
         },
       });
+
+       */
 
       ScrollTrigger.refresh();
     }, rootRef);
@@ -117,12 +131,14 @@ export default function Gsap404Page({ images, text }: Props) {
               id={`card-${index + 1}`}
               className={`card ${img.top} ${img.size}`}
               style={{
-                left: `${-index * 400}px`,
+                left: `calc(${-(index+1) * 25}vW - 100px)`,
+                
               }}
             >
               <img src={img.image.url} alt="" />
               <a href="">{img.top}</a>
             </div>
+
           ))}
         </section>
       </div>
@@ -190,7 +206,7 @@ export default function Gsap404Page({ images, text }: Props) {
         }
 
         .top {
-          top: 0;
+          top: 50px;
         }
 
         .middle {

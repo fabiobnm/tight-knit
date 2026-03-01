@@ -7,6 +7,7 @@ export type AIImage = {
   size: number;
   top: number;
   left: number;
+  speed:number
 };
 
 export type AI = {
@@ -33,6 +34,7 @@ export const AI_PAGE_QUERY = /* GraphQL */ `
         size
         top
         left
+        speed
       }
     }
   }

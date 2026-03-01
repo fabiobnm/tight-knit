@@ -363,7 +363,7 @@ useEffect(() => {
 
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? "85vh" : "0px",
+                  maxHeight: isOpen ? "90vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
@@ -372,7 +372,7 @@ useEffect(() => {
                 <div
                   className="creativeDiv"
                  
-                  style={{  height:'85vH', overflowY:'hidden',
+                  style={{  height:'90vH', overflowY:'hidden',
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
