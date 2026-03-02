@@ -169,7 +169,6 @@ div{
     justify-content: flex-end;
     height: 100%;
     display: flex;
-    flex: 0 0 auto;
 }
 .projectThumbnail{
     object-fit: cover;
@@ -348,7 +347,7 @@ and (orientation : portrait) {
 
 .creativeDiv{
     margin-top: 15px;
-    padding-bottom: 55px;
+    padding-bottom: 15px;
 
 }
 .textAI{
