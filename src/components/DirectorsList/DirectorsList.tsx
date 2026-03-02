@@ -363,7 +363,7 @@ useEffect(() => {
 
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? "90dvh" : "0px",
+                  maxHeight: isOpen ? "90vh" : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
