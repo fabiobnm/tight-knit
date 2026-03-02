@@ -372,7 +372,7 @@ useEffect(() => {
                 <div
                   className="creativeDiv"
                  
-                  style={{  height:'90vH', overflowY:'hidden',
+                  style={{  height:'auto', overflowY:'hidden',
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
@@ -429,7 +429,7 @@ useEffect(() => {
 
                   {/* Projects */}
 
-                  <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px'}}>
+                  <div style={{display:'flex', gap:10, overflowX:'auto', paddingInline:'10px',alignItems: 'flex-start'}}>
                   {director.projects?.map((project, index) => (
                     <div 
                       key={`${project.title}-${index}`}

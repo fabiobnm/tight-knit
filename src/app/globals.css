@@ -169,6 +169,7 @@ div{
     justify-content: flex-end;
     height: 100%;
     display: flex;
+    flex: 0 0 auto;
 }
 .projectThumbnail{
     object-fit: cover;
