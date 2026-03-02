@@ -174,7 +174,7 @@ useEffect(() => {
       // Aggiorna altezza creativeAbout per il mobile
       setTimeout(() => {
         const el = document.querySelector<HTMLDivElement>(
-          `.creativeAboutMobile[data-name="${newValue}"]`
+          `AAAAAAA.creativeAboutMobile[data-name="${newValue}"]`
         );
         if (el) {
           setCreativeHeights(prev => ({ ...prev, [newValue]: el.offsetHeight }));
@@ -331,7 +331,7 @@ useEffect(() => {
                     {director.projects?.map((project, index) => (
                       <div key={`${project.title}-${index}`} className="projectDiv" onMouseUp={() => { if (!isDragging) openProjectGallery(project); }}>
                         {project.thumbnail?.url && <img style={{ maxHeight: "25vh" }} className="projectThumbnail" src={project.thumbnail.url} alt={project.title} loading="eager" />}
-                        <div className="projectText">{project.title}<br />{project.client}</div>
+                        <div className="projectText" style={{color:'red'}}>{project.title}<br />{project.client}</div>
                       </div>
                     ))}
                   </div>
