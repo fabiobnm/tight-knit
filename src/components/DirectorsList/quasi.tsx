@@ -297,7 +297,7 @@ useEffect(() => {
                   marginTop: "6px",
                 }}
               >
-                <div className="creativeDiv" style={{ height: "auto", overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
+                <div className="creativeDiv" style={{ height: "100vh", overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el) return;
@@ -331,7 +331,7 @@ useEffect(() => {
                     {director.projects?.map((project, index) => (
                       <div key={`${project.title}-${index}`} className="projectDiv" onMouseUp={() => { if (!isDragging) openProjectGallery(project); }}>
                         {project.thumbnail?.url && <img style={{ maxHeight: "25vh" }} className="projectThumbnail" src={project.thumbnail.url} alt={project.title} loading="eager" />}
-                        <div className="projectText" style={{color:'red'}}>{project.title}<br />{project.client}</div>
+                        <div className="projectText" style={{color:'green'}}>{project.title}<br />{project.client}</div>
                       </div>
                     ))}
                   </div>
