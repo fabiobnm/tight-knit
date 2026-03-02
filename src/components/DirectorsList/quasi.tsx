@@ -212,7 +212,7 @@ useEffect(() => {
         {sortedDirectors.map((director, i) => {
           const isOpen = selectedDirector === director.name;
           const mobileHeight = creativeHeights[director.name]
-            ? creativeHeights[director.name] + window.innerHeight * 0.28 + 30
+            ? creativeHeights[director.name] + window.innerHeight * 0.28 + 50
             : 0;
 
           return (
@@ -291,13 +291,13 @@ useEffect(() => {
               {/* MOBILE */}
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? `${mobileHeight}px` : "0px",
+                  maxHeight: isOpen ? `90vh` : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
                 }}
               >
-                <div className="creativeDiv" style={{ height: "100vh", overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
+                <div className="creativeDiv" style={{ height: `${mobileHeight}px` , overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el) return;
@@ -331,7 +331,7 @@ useEffect(() => {
                     {director.projects?.map((project, index) => (
                       <div key={`${project.title}-${index}`} className="projectDiv" onMouseUp={() => { if (!isDragging) openProjectGallery(project); }}>
                         {project.thumbnail?.url && <img style={{ maxHeight: "25vh" }} className="projectThumbnail" src={project.thumbnail.url} alt={project.title} loading="eager" />}
-                        <div className="projectText" style={{color:'green'}}>{project.title}<br />{project.client}</div>
+                        <div className="projectText" style={{color:'orange'}}>{project.title}<br />{project.client}</div>
                       </div>
                     ))}
                   </div>
