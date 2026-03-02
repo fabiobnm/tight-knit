@@ -291,7 +291,7 @@ useEffect(() => {
               {/* MOBILE */}
               <div className="questoMobile"
                 style={{
-                  maxHeight: isOpen ? `90vh` : "0px",
+                  maxHeight: isOpen ? `${mobileHeight}px` : "0px",
                   overflow: "hidden",
                   transition: "max-height 0.5s ease-in",
                   marginTop: "6px",
@@ -331,7 +331,7 @@ useEffect(() => {
                     {director.projects?.map((project, index) => (
                       <div key={`${project.title}-${index}`} className="projectDiv" onMouseUp={() => { if (!isDragging) openProjectGallery(project); }}>
                         {project.thumbnail?.url && <img style={{ maxHeight: "25vh" }} className="projectThumbnail" src={project.thumbnail.url} alt={project.title} loading="eager" />}
-                        <div className="projectText" style={{color:'orange'}}>{project.title}<br />{project.client}</div>
+                        <div className="projectText" style={{color:'green'}}>{project.title}<br />{project.client}</div>
                       </div>
                     ))}
                   </div>
