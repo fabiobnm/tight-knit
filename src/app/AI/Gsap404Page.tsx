@@ -30,7 +30,7 @@ export default function Gsap404Page({ images, text }: Props) {
 
       /* ================= WRAPPER SCROLL ================= */
       gsap.to('.wrapper-404', {
-        x: '300vw',
+        x: '400vw',
         ease: 'none',
         scrollTrigger: {
           trigger: '.wrapper-404',
@@ -43,10 +43,17 @@ export default function Gsap404Page({ images, text }: Props) {
             console.log('Scroll percent:', percent.toFixed(1));
 
       // gestisci l'opacità direttamente con GSAP
-      if (percent >= 15 ) {
+      if (percent >= 15 && percent<=85) {
         gsap.set('.textAI', { opacity: 0 });
       } else {
         gsap.set('.textAI', { opacity: 1 });
+      }
+
+       // gestisci l'opacità direttamente con GSAP
+      if (percent >= 15 ) {
+        gsap.set('.scrollText', { opacity: 0 });
+      } else {
+        gsap.set('.scrollText', { opacity: 1 });
       }
     },
         },
@@ -104,9 +111,11 @@ export default function Gsap404Page({ images, text }: Props) {
           pointerEvents: 'none',
           opacity: scompare ? 0 : 1, // cambia opacità in base allo stato
           transition: 'opacity 0.3s ease',
-        }}
-        dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
+        }}>
+       <div dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
       />
+      <div className='scrollText' style={{textDecoration:'underline'}}> <br></br><br></br> scroll</div>
+      </div>
 
       <div ref={rootRef} className="container" >
         <nav className="navvino" />
