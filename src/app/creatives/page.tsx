@@ -5,7 +5,7 @@ import {
   DIRECTORS_PAGE_QUERY,
   type DirectorsPageQueryResult,
 } from "@/lib/queries/directors";
-import DirectorsList from "@/components/DirectorsList/quasi";
+import DirectorsList from "@/components/DirectorsList/DirectorsList";
 
 export const dynamic='force-static';
 export const revalidate= 0;

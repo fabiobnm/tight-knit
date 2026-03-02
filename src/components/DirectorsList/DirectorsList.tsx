@@ -448,7 +448,7 @@ useEffect(() => {
                         />
                       )}
                       <div className="projectText">
-                        {project.title}
+                        _{project.title}
                         <br />
                         {project.client}
                       </div>
