@@ -218,7 +218,10 @@ useEffect(() => {
 
 @media (max-width: 600px) {
 
-
+ .container {
+          width: 100%;
+          height: 2200vh;
+        }
 }
      
       `}</style>
