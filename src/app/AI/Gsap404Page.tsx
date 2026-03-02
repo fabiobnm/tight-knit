@@ -25,7 +25,7 @@ const [DivDimention, setDivDimention] = useState(400);
 useEffect(() => {
   const checkMobile = () => {
     setSpace(window.innerWidth <= 768 ? 60 : 25);
-    setDivDimention(window.innerWidth <= 768 ? 600 : 400);
+    setDivDimention(window.innerWidth <= 768 ? 800 : 400);
     console.log('dimensione'+DivDimention)
   };
 
