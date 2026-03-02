@@ -42,7 +42,6 @@ export default function DirectorsList({ directors }: Props) {
   const [hoverAvatar, setHoverAvatar] = useState<HoverAvatar>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [creativeHeights, setCreativeHeights] = useState<Record<string, number>>({});
-  const [canHover, setCanHover] = useState(false);
 
   const scrollerRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
@@ -106,14 +105,16 @@ export default function DirectorsList({ directors }: Props) {
   }, [searchParams, sortedDirectors]);
 
   /* ================= HOVER DETECTION ================= */
-  useEffect(() => {
-    const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
-    setCanHover(mq.matches);
+const [canHover, setCanHover] = useState(() => 
+  typeof window !== 'undefined' ? window.matchMedia("(hover: hover) and (pointer: fine)").matches : false
+);
 
-    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
-    mq.addEventListener("change", handler);
-    return () => mq.removeEventListener("change", handler);
-  }, []);
+useEffect(() => {
+  const mq = window.matchMedia("(hover: hover) and (pointer: fine)");
+  const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+  mq.addEventListener("change", handler);
+  return () => mq.removeEventListener("change", handler);
+}, []);
 
   /* ================= AVATAR WOBBLE ================= */
   useEffect(() => {
