@@ -372,7 +372,7 @@ useEffect(() => {
                 <div
                   className="creativeDiv"
                  
-                  style={{  height:'90vH', overflowY:'hidden',
+                  style={{  height:'auto', overflowY:'hidden',
                     cursor: isDragging ? "grabbing" : "grab", display:'block'
                   }}
                   onMouseDown={(e) => {
