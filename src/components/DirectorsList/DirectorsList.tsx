@@ -297,7 +297,7 @@ useEffect(() => {
                   marginTop: "6px",
                 }}
               >
-                <div className="creativeDiv" style={{ height: "90vh", overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
+                <div className="creativeDiv" style={{ height: "auto", overflowY: "hidden", cursor: isDragging ? "grabbing" : "grab", display: "block" }}
                   onMouseDown={(e) => {
                     const el = scrollerRefs.current[director.name];
                     if (!el) return;
