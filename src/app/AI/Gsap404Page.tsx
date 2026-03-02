@@ -97,7 +97,7 @@ export default function Gsap404Page({ images, text }: Props) {
           position: 'fixed',
           top: '50vh',
           left: '50vw',
-          width:'65vW',
+          width:'50vW',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           zIndex: 0,
