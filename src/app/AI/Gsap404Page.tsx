@@ -104,7 +104,6 @@ export default function Gsap404Page({ images, text }: Props) {
           position: 'fixed',
           top: '50vh',
           left: '50vw',
-          width:'50vW',
           transform: 'translate(-50%, -50%)',
           textAlign: 'center',
           zIndex: 0,
@@ -114,7 +113,7 @@ export default function Gsap404Page({ images, text }: Props) {
         }}>
        <div dangerouslySetInnerHTML={{ __html: text?.html ?? "Nessun contenuto AI trovato." }}
       />
-      <div className='scrollText' style={{textDecoration:'underline'}}> <br></br><br></br> scroll</div>
+      <div className='scrollText'> <br></br><br></br> scroll <br></br>↓</div>
       </div>
 
       <div ref={rootRef} className="container" >

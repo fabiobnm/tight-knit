@@ -276,6 +276,10 @@ a {
     text-align: center;
 }
 
+.textAI{
+  width: 50vW;
+}
+
 
 
 @media (prefers-color-scheme: dark) {
@@ -345,6 +349,9 @@ and (orientation : portrait) {
     margin-top: 15px;
     padding-bottom: 15px;
 
+}
+.textAI{
+  width: 75vW;
 }
 .textAbout{
   max-width: 75vW;  
