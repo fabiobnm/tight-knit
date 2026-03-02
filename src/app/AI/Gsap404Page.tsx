@@ -19,6 +19,18 @@ type Props = {
 export default function Gsap404Page({ images, text }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const safeImages = images ?? [];
+const [space, setSpace] = useState(25);
+
+useEffect(() => {
+  const checkMobile = () => {
+    setSpace(window.innerWidth <= 768 ? 40 : 25);
+  };
+
+  checkMobile();
+  window.addEventListener('resize', checkMobile);
+
+  return () => window.removeEventListener('resize', checkMobile);
+}, []);
   
   // Stato per far scomparire il testo
   const [scompare, setScompare] = useState(false);
@@ -126,7 +138,7 @@ export default function Gsap404Page({ images, text }: Props) {
               id={`card-${index + 1}`}
               className={`card ${img.top} ${img.size}`}
               style={{
-                left: `calc(${-(index+1) * 25}vW - 100px)`,
+                left: `calc(${-(index+1) * space}vw - 100px)`,
               }}
             >
               <img src={img.image.url} alt="" />
