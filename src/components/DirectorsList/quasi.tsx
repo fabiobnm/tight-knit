@@ -146,16 +146,7 @@ useEffect(() => {
   }, []);
 
   /* ================= CALCOLO ALTEZZE CREATIVEABOUT ================= */
-  useEffect(() => {
-    const creativeAboutEls = document.querySelectorAll<HTMLDivElement>(".creativeAboutMobile");
-    creativeAboutEls.forEach((el) => {
-      const name = el.dataset.name;
-      if (name) {
-        setCreativeHeights(prev => ({ ...prev, [name]: el.offsetHeight }));
-        console.log(`Director ${name} creativeAbout height:`, el.offsetHeight);
-      }
-    });
-  }, [directors]);
+  
 
   /* ================= CLICK DIRECTOR ================= */
   const handleClickDirector = (name: string, index: number) => {
@@ -172,15 +163,15 @@ useEffect(() => {
       setTimeout(() => smoothScrollToIndex(index), 350);
 
       // Aggiorna altezza creativeAbout per il mobile
-      setTimeout(() => {
+      
         const el = document.querySelector<HTMLDivElement>(
-          `AAAAAAA.creativeAboutMobile[data-name="${newValue}"]`
+          `.creativeAboutMobile[data-name="${newValue}"]`
         );
         if (el) {
           setCreativeHeights(prev => ({ ...prev, [newValue]: el.offsetHeight }));
           console.log("Altezza di", newValue, "=", el.offsetHeight);
         }
-      }, 50);
+     
     } else {
       router.replace(`/creatives`, { scroll: false });
     }
@@ -331,7 +322,7 @@ useEffect(() => {
                     {director.projects?.map((project, index) => (
                       <div key={`${project.title}-${index}`} className="projectDiv" onMouseUp={() => { if (!isDragging) openProjectGallery(project); }}>
                         {project.thumbnail?.url && <img style={{ maxHeight: "25vh" }} className="projectThumbnail" src={project.thumbnail.url} alt={project.title} loading="eager" />}
-                        <div className="projectText">{project.title}<br />{project.client}</div>
+                        <div className="projectText" style={{color:'blue'}}>{project.title}<br />{project.client}</div>
                       </div>
                     ))}
                   </div>
