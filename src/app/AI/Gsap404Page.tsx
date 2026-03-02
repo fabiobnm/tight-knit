@@ -20,10 +20,13 @@ export default function Gsap404Page({ images, text }: Props) {
   const rootRef = useRef<HTMLDivElement | null>(null);
   const safeImages = images ?? [];
 const [space, setSpace] = useState(25);
+const [DivDimention, setDivDimention] = useState(400);
 
 useEffect(() => {
   const checkMobile = () => {
-    setSpace(window.innerWidth <= 768 ? 40 : 25);
+    setSpace(window.innerWidth <= 768 ? 60 : 25);
+    setDivDimention(window.innerWidth <= 768 ? 600 : 400);
+    console.log('dimensione'+DivDimention)
   };
 
   checkMobile();
@@ -42,7 +45,7 @@ useEffect(() => {
 
       /* ================= WRAPPER SCROLL ================= */
       gsap.to('.wrapper-404', {
-        x: '400vw',
+        x: DivDimention+'vw',
         ease: 'none',
         scrollTrigger: {
           trigger: '.wrapper-404',
