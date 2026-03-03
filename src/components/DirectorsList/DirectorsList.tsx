@@ -136,9 +136,11 @@ useEffect(() => {
   } else {
     router.replace(`/creatives`, { scroll: false });
   }
-
-  const scroller = scrollerRefs.current[name];
+    setTimeout(() => {
+      const scroller = scrollerRefs.current[name];
   if (scroller) scroller.scrollLeft = 0;
+    }, 1000);
+  
 };
   /* ================= LIGHTBOX ================= */
 

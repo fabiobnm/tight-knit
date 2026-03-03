@@ -9,7 +9,7 @@ const inter = Inter({
 
 export const metadata: Metadata = {
   title: "Tight Knit",
-  description: "Tight Knit website",
+  description: "We are a vastly experienced team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors, boasting a diverse range of creative knowledge and skills, across commercial, film & television.",
 };
 
 export default function RootLayout({
