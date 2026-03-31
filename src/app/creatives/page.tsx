@@ -24,10 +24,9 @@ export default async function DirectorsPage() {
   return (
     <div>
       <Header />
-     
+     <h1 style={{ display: 'none' }}>Creatives</h1>
       <main style={{marginTop:'22vH', marginBottom:'20vH'}} className="mx-auto max-w-5xl px-4 py-8 opacityAnim">
         <DirectorsList directors={directors} />
-         <h1 style='display:none'>Creatives</h1>
       </main>
     </div>
   );
