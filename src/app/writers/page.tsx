@@ -25,7 +25,7 @@ export default async function WritersPage() {
   return (
     <div>
       <Header />
-      <h1 style={{ display: 'none' }}>Tight-knit Wtriters</h1>
+      <h1 style={{ display: 'none' }}>Tight-knit Writers</h1>
       <main style={{marginTop:'50vH', transform:'translateY(-50%)' }} className="mx-auto max-w-5xl px-4 py-8 opacityAnim">
         <WritersList writers={writers} />
       </main>
