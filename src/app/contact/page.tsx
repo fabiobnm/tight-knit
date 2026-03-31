@@ -21,6 +21,7 @@ export default async function Contact() {
   return (
     <div >
         <Header />
+      <h1 style={{ display: 'none' }}>Tight-knit Contact</h1>
       <main className="textContact opacityAnim">
         <p style={{marginBottom:'50px'}}>CONTACTS</p>
 
