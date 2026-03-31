@@ -8,8 +8,9 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tight Knit",
-  description: "We are a vastly experienced team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors, boasting a diverse range of creative knowledge and skills, across commercial, film & television.",
+  title: "Tight Knit - Creative Visual Research",
+  description: "Tight Knit is a London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors, boasting a diverse range of creative knowledge and skills, across commercial, film & television.",
+  keywords: "creative research, visual research, london, AI-collaborators, AI research, AI design, visual editors, writing, writers"
 };
 
 export default function RootLayout({
