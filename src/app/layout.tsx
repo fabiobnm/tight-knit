@@ -21,11 +21,13 @@ export const metadata: Metadata = {
     siteName: "Tight Knit",
     title: "Tight Knit - Creative Visual Research",
     description: "London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors.",
+    images: [{ url: "/social.jpg" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Tight Knit - Creative Visual Research",
     description: "London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors.",
+    images: ["/social.jpg"],
   },
   alternates: {
     canonical: "/",
