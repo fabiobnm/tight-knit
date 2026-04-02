@@ -1,4 +1,5 @@
 // src/app/directors/page.tsx
+import type { Metadata } from "next";
 import Header from "@/components/Header/Header";
 import { hygraph } from "@/lib/hygraph";
 import {
@@ -9,6 +10,12 @@ import DirectorsList from "@/components/DirectorsList/DirectorsList";
 
 export const dynamic='force-static';
 export const revalidate= 0;
+
+export const metadata: Metadata = {
+  title: "Creatives",
+  description: "Discover the creative directors and visual researchers at Tight Knit — working across commercial, film and television.",
+  alternates: { canonical: "/creatives" },
+};
 
 
 async function getDirectors() {
