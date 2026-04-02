@@ -1,4 +1,5 @@
 // src/app/about/page.tsx
+import type { Metadata } from "next";
 import Header from "@/components/Header/Header";
 import { hygraph } from "@/lib/hygraph";
 import {ABOUT_PAGE_QUERY,type AboutPageQueryResult} from "@/lib/queries/about";
@@ -6,6 +7,12 @@ import ReactMarkdown from "react-markdown";
 
 export const dynamic='force-static';
 export const revalidate= 0;
+
+export const metadata: Metadata = {
+  title: "About",
+  description: "Learn about Tight Knit — a London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors working across commercial, film and television.",
+  alternates: { canonical: "/about" },
+};
 
 
 

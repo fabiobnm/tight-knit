@@ -1,4 +1,5 @@
 // src/app/writers/page.tsx
+import type { Metadata } from "next";
 import Header from "@/components/Header/Header";
 import { hygraph } from "@/lib/hygraph";
 import {
@@ -10,6 +11,12 @@ import WritersList from "@/components/WritersList/WritersList";
 
 export const dynamic='force-static';
 export const revalidate= 0;
+
+export const metadata: Metadata = {
+  title: "Writers",
+  description: "Explore our roster of Writers and Editors at Tight Knit — skilled storytellers working across commercial, film and television.",
+  alternates: { canonical: "/writers" },
+};
 
 
 async function getWriters() {

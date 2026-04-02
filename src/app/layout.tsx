@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import JsonLd from "@/components/JsonLd";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -8,9 +9,27 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "Tight Knit - Creative Visual Research",
+  metadataBase: new URL("https://www.tight-knit.co"),
+  title: {
+    default: "Tight Knit - Creative Visual Research",
+    template: "%s | Tight Knit",
+  },
   description: "Tight Knit is a London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors, boasting a diverse range of creative knowledge and skills, across commercial, film & television.",
-  keywords: "creative research, visual research, london, AI-collaborators, AI research, AI design, visual editors, writing, writers"
+  openGraph: {
+    type: "website",
+    locale: "en_GB",
+    siteName: "Tight Knit",
+    title: "Tight Knit - Creative Visual Research",
+    description: "London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tight Knit - Creative Visual Research",
+    description: "London based team of Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors.",
+  },
+  alternates: {
+    canonical: "/",
+  },
 };
 
 export default function RootLayout({
@@ -21,6 +40,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
+        <JsonLd />
         {children}
       </body>
     </html>

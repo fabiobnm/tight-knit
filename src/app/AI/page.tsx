@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import { hygraph } from '@/lib/hygraph';
 import {
   AI_PAGE_QUERY,
@@ -9,6 +10,12 @@ import Gsap404Page from './Gsap404Page';
 
 export const dynamic = 'force-static';
 export const revalidate = 0;
+
+export const metadata: Metadata = {
+  title: 'AI',
+  description: 'Explore AI-driven creative visual research and design projects by Tight Knit — pushing the boundaries of AI collaboration in visual storytelling.',
+  alternates: { canonical: '/AI' },
+};
 
 async function getAI(): Promise<AI | null> {
   const data = await hygraph.request<AIPageQueryResult>(AI_PAGE_QUERY);

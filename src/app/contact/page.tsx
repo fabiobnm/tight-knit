@@ -1,9 +1,16 @@
+import type { Metadata } from "next";
 import Header from "@/components/Header/Header";
 import { hygraph } from "@/lib/hygraph";
 import {CONTACT_PAGE_QUERY,type ContactPageQueryResult} from "@/lib/queries/contact";
 
 export const dynamic='force-static';
 export const revalidate= 0;
+
+export const metadata: Metadata = {
+  title: "Contact",
+  description: "Get in touch with Tight Knit — London based Creative Visual Researchers, Designers, AI-collaborators, Writers and Editors.",
+  alternates: { canonical: "/contact" },
+};
 
 
 
